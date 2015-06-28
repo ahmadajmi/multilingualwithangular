@@ -1,8 +1,16 @@
 'use strict';
 
-angular.module('myApp', [])
-.controller('BusinessCardController', function($scope){
-	$scope.user = {
-		name: 'Tanay Pant'
-	}
-});
+angular.module('Multilingual', ['pascalprecht.translate'])
+
+.config(['$translateProvider', function($translateProvider){
+
+  $translateProvider
+  .translations('en', {
+    'HELLO': 'Hello'
+  })
+  .translations('ar', {
+    'HELLO': 'مرحبا'
+  })
+  .preferredLanguage('en')
+
+}]);

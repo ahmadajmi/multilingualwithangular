@@ -14,7 +14,7 @@ For a better management to our packages we will use bower as a package manager.L
 
 Our bower files will look like
 
-``` json
+``` javascript
 {
   name: 'multilingualwithangular',
   version: '0',
@@ -60,9 +60,41 @@ bower install angular-translate --save
 </html>
 ```
 
+#### Adding translation using angular-translate
+
+time for adding translation for the selected language, we will work with Arabic and English as our main languages, the two languages are different in the way of writing and the writing direction, Arabic (RTL) English (LTR).
+
+[angular-translate] is an [AngularJS] module that makes it very easy to translate our App text, it provides many features like filters to be used directly in HTML code.
+
+Let's setup Angular and configure it with angular-translate
+
+```
+'use strict';
+
+angular.module('Multilingual', ['pascalprecht.translate'])
+
+.config(['$translateProvider', function($translateProvider){
+
+  $translateProvider
+  .translations('en', {
+    'HELLO': 'Hello'
+  })
+  .translations('ar', {
+    'HELLO': 'مرحبا'
+  })
+  .preferredLanguage('en')
+
+}]);
+```
+
+What we did is adding an Angular module called `Multilingual` and then we inject angular-translate module as a dependency into your App then setup the preferred language as `en`
+
+Let's see an example of using the filter
+
+{{ 'HELLO' | translate }}
+
 #### Switching between different languages
 #### CSS and changing App layout direction (RTL & LTR)
-#### Adding translation using angular-translate
 #### Conclusion
 
 #### Load different remote content based on the selected language
@@ -76,4 +108,4 @@ bower install angular-translate --save
 [SASS]: http://sass-lang.com/
 [Gulp]: http://gulpjs.com/
 [Bower]: http://bower.io/
-[Angular.js]: https://angularjs.org/
+[AngularJS]: https://angularjs.org/
