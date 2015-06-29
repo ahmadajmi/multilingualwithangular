@@ -1,8 +1,11 @@
 'use strict';
 
-angular.module('Multilingual', ['pascalprecht.translate'])
+var app = angular.module('Multilingual', [
+  'pascalprecht.translate',
+  'ngCookies'
+  ]);
 
-.config(['$translateProvider', function($translateProvider){
+app.config(['$translateProvider', function($translateProvider){
 
   $translateProvider
   .translations('en', {
@@ -11,6 +14,8 @@ angular.module('Multilingual', ['pascalprecht.translate'])
   .translations('ar', {
     'HELLO': 'مرحبا'
   })
-  .preferredLanguage('en')
+  .preferredLanguage('ar')
+  .useLocalStorage()
+  .useSanitizeValueStrategy(null);
 
 }]);
