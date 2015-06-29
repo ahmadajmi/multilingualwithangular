@@ -68,7 +68,7 @@ time for adding translation for the selected language, we will work with Arabic 
 
 Let's setup Angular and configure it with angular-translate
 
-```
+``` javascript
 'use strict';
 
 var app = angular.module('Multilingual', ['pascalprecht.translate']);
@@ -119,7 +119,7 @@ our HTML file should be updated with the new files
 
 Our script file now looks like
 
-```
+``` javascript
 var app = angular.module('Multilingual', [
   'pascalprecht.translate',
   'ngCookies'
