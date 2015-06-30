@@ -19,21 +19,21 @@ Our bower files will look like
   name: 'multilingualwithangular',
   version: '0',
   authors: [
-    'Ahmad Ajmi <ahmad@ahmadajmi.com>'
+  'Ahmad Ajmi <ahmad@ahmadajmi.com>'
   ],
   description: 'Multilingual support for Angularjs',
   keywords: [
-    'AngularJS',
-    'multilingual'
+  'AngularJS',
+  'multilingual'
   ],
   license: 'MIT',
   private: true,
   ignore: [
-    '**/.*',
-    'node_modules',
-    'bower_components',
-    'test',
-    'tests'
+  '**/.*',
+  'node_modules',
+  'bower_components',
+  'test',
+  'tests'
   ]
 }
 ```
@@ -47,15 +47,15 @@ bower install angular-translate --save
 <!DOCTYPE HTML>
 <html lang="en" ng-app="myApp">
 <head>
-    <title></title>
-    <meta charset="utf-8">
-    <link href="style.css" rel="stylesheet">
+  <title></title>
+  <meta charset="utf-8">
+  <link href="style.css" rel="stylesheet">
 </head>
 
 <body>
-    <script src="bower_components/angular/angular.min.js"></script>
-    <script src="bower_components/angular-translate/angular-translate.min.js"></script>
-    <script src="js/script.js"></script>
+  <script src="bower_components/angular/angular.min.js"></script>
+  <script src="bower_components/angular-translate/angular-translate.min.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
 ```
@@ -97,7 +97,9 @@ What we did is:
 
 Let's see an example of using the filter
 
+```
 {{ 'HELLO' | translate }}
+```
 
 What if the user refreshed the page, the current scenario is to display the languages we set using `preferredLanguage`, but what if we want to display the languages to be the one the user set before the refresh, so our App can remember the language.
 
@@ -112,20 +114,20 @@ This will also install `angular-cookies` and `angular-translate-storage-local` a
 our HTML file should be updated with the new files
 
 ```
-  <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
-  <script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js"></script>
-  <script src="bower_components/angular-translate-storage-local/angular-translate-storage-local.min.js"></script>
+<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+<script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js"></script>
+<script src="bower_components/angular-translate-storage-local/angular-translate-storage-local.min.js"></script>
 ```
 
 Our script file now looks like
 
 ``` javascript
 var app = angular.module('Multilingual', [
-  'pascalprecht.translate',
-  'ngCookies'
-  ]);
+'pascalprecht.translate',
+'ngCookies'
+]);
 
-app.config(['$translateProvider', function($translateProvider){
+app.config(['$translateProvider', function($translateProvider) {
 
   $translateProvider
   .translations('en', {
@@ -145,6 +147,21 @@ The differences here are:
 
 * Add `ngCookies` as a dependency
 * Update `angular-translate` config to use `useLocalStorage()`
+
+##### write about `useMissingTranslationHandlerLog()`
+
+Another feature is that we can load out translation tables in an asynchronous way with
+
+```
+bower install angular-translate-loader-static-files --save
+```
+
+```
+$translateProvider.useStaticFilesLoader({
+  prefix: '/translations/',
+  suffix: '.json'
+})
+```
 
 #### Switching between different languages
 #### CSS and changing App layout direction (RTL & LTR)

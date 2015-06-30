@@ -8,14 +8,20 @@ var app = angular.module('Multilingual', [
 app.config(['$translateProvider', function($translateProvider){
 
   $translateProvider
-  .translations('en', {
-    'HELLO': 'Hello'
+  .useStaticFilesLoader({
+    prefix: '/translations/',
+    suffix: '.json'
   })
-  .translations('ar', {
-    'HELLO': 'مرحبا'
-  })
-  .preferredLanguage('ar')
+  // .translations('en', {
+  //   'HELLO': 'Hello'
+  // })
+  // .translations('ar', {
+  //   'HELLO': 'مرحبا'
+  // })
+  .preferredLanguage('en')
   .useLocalStorage()
+  .useMissingTranslationHandlerLog()
   .useSanitizeValueStrategy(null);
+
 
 }]);
