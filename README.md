@@ -150,10 +150,37 @@ The differences here are:
 
 ##### write about `useMissingTranslationHandlerLog()`
 
-Another feature is that we can load out translation tables in an asynchronous way with
+Sometimes we need to know if we have missed some translation ID, angular-translate provides a very good method which is `useMissingTranslationHandlerLog()` which logs warnings into console for any missing translation ID. Using this method directly on `$translateProvider` as
+
+```
+$translateProvider.useMissingTranslationHandlerLog();
+```
+
+Another feature is that we can load our translation files in an asynchronous way Using staticFilesLoader, first we install the extension with bower:
 
 ```
 bower install angular-translate-loader-static-files --save
+```
+
+Once installed we need to append the files to our HTML as
+
+```
+<script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
+```
+
+Now we can use `useStaticFilesLoader` method to tell angular-translate which language files to use using a specific pattern:
+
+```
+prefix - specifies file prefix
+suffix - specifies file suffix
+```
+
+In our translations directory we added two files in this way
+
+```
+translations
+├── ar.json
+└── en.json
 ```
 
 ```
@@ -163,7 +190,48 @@ $translateProvider.useStaticFilesLoader({
 })
 ```
 
+If we want to add a prefix to files we can do something like this
+
+```
+translations
+├── locale-ar.json
+└── locale-en.json
+```
+
+```
+$translateProvider.useStaticFilesLoader({
+  prefix: '/translations/locale-',
+  suffix: '.json'
+})
+```
+
+And angular translate will concatenate the data we given to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in any case.
+
 #### Switching between different languages
+
+Till now we worked only with label translations, how can we switch between languages at runtime. We need a way to enable the user to change his preferred language. We will add buttons to change the language.
+
+``` html
+  <div ng-controller="LanguageSwitchController">
+
+    <button ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button button-small"></button>
+
+    <button ng-click="changeLanguage('en')" translate="button_lang_en" class="button button-small"></button>
+
+  </div>
+```
+
+``` javascript
+app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate',
+  function($scope, $rootScope, $translate) {
+
+    $scope.changeLanguage = function(langKey) {
+      $translate.use(langKey);
+    };
+
+  }]);
+```
+
 #### CSS and changing App layout direction (RTL & LTR)
 #### Conclusion
 
@@ -180,3 +248,4 @@ $translateProvider.useStaticFilesLoader({
 [Bower]: http://bower.io/
 [angular-translate-storage-local]: https://github.com/angular-translate/bower-angular-translate-storage-local
 [AngularJS]: https://angularjs.org/
+[asynchronous-loading]: http://angular-translate.github.io/docs/#/guide/12_asynchronous-loading
