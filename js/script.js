@@ -23,14 +23,18 @@ app.config(['$translateProvider', function($translateProvider){
 .useMissingTranslationHandlerLog()
 .useSanitizeValueStrategy(null);
 
-
 }]);
 
 app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate',
   function($scope, $rootScope, $translate) {
-
     $scope.changeLanguage = function(langKey) {
       $translate.use(langKey);
     };
 
-  }]);
+    $rootScope.$on('$translateChangeSuccess', function(event, data) {
+      document.documentElement.setAttribute('lang', data.language);
+      // tmhDynamicLocale.set(data.language.toLowerCase().replace(/_/g, '-'));
+    });
+  }
+
+]);

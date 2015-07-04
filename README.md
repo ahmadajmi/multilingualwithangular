@@ -183,7 +183,7 @@ translations
 └── en.json
 ```
 
-```
+``` javascript
 $translateProvider.useStaticFilesLoader({
   prefix: '/translations/',
   suffix: '.json'
@@ -198,7 +198,7 @@ translations
 └── locale-en.json
 ```
 
-```
+``` javascript
 $translateProvider.useStaticFilesLoader({
   prefix: '/translations/locale-',
   suffix: '.json'
@@ -207,6 +207,23 @@ $translateProvider.useStaticFilesLoader({
 
 And angular translate will concatenate the data we given to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in any case.
 
+Using the first way, config method should be
+
+``` javascript
+app.config(['$translateProvider', function($translateProvider){
+
+  $translateProvider
+  .useStaticFilesLoader({
+    prefix: '/translations/',
+    suffix: '.json'
+  })
+  .preferredLanguage('en')
+  .useLocalStorage()
+  .useMissingTranslationHandlerLog();
+
+}]);
+```
+
 #### Switching between different languages
 
 Till now we worked only with label translations, how can we switch between languages at runtime. We need a way to enable the user to change his preferred language. We will add buttons to change the language.
@@ -214,12 +231,16 @@ Till now we worked only with label translations, how can we switch between langu
 ``` html
   <div ng-controller="LanguageSwitchController">
 
-    <button ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button button-small"></button>
+    <button ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button"></button>
 
-    <button ng-click="changeLanguage('en')" translate="button_lang_en" class="button button-small"></button>
+    <button ng-click="changeLanguage('en')" translate="button_lang_en" class="button"></button>
 
   </div>
 ```
+
+`translate="button_lang_ar"`
+
+Create a new controller
 
 ``` javascript
 app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate',
