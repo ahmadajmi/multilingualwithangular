@@ -12,16 +12,10 @@ app.config(['$translateProvider', function($translateProvider){
     prefix: '/translations/',
     suffix: '.json'
   })
-  // .translations('en', {
-  //   'HELLO': 'Hello'
-  // })
-  // .translations('ar', {
-  //   'HELLO': 'مرحبا'
-  // })
-.preferredLanguage('en')
-.useLocalStorage()
-.useMissingTranslationHandlerLog()
-.useSanitizeValueStrategy(null);
+  .preferredLanguage('en')
+  .useLocalStorage()
+  .useMissingTranslationHandlerLog()
+  .useSanitizeValueStrategy(null);
 
 }]);
 
@@ -33,8 +27,7 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
 
     $rootScope.$on('$translateChangeSuccess', function(event, data) {
       document.documentElement.setAttribute('lang', data.language);
-      // tmhDynamicLocale.set(data.language.toLowerCase().replace(/_/g, '-'));
     });
   }
 
-]);
+  ]);

@@ -9,7 +9,11 @@
 <body>
 
   <div class="wrapper">
-    {{ 'HELLO' | translate }}
+
+    <h2>{{ 'HELLO' | translate }}</h2>
+
+    <h2 translate>HELLO</h2>
+    <h2 translate="HELLO"></h2>
 
     <div ng-controller="LanguageSwitchController">
 
