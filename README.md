@@ -60,6 +60,7 @@ bower install angular-translate --save
 </html>
 ```
 
+
 #### Adding translation using angular-translate
 
 The first step is to add translation support for App text, we will work with Arabic and English as our main languages, the two languages are different in the way of writing and the writing direction, Arabic (RTL) English (LTR).
@@ -87,7 +88,7 @@ app.config(['$translateProvider', function($translateProvider){
 }]);
 ```
 
-```
+``` html
 <html lang="en" ng-app="Multilingual">
 ```
 
@@ -101,7 +102,7 @@ What we did is:
 
 Let's see an example using `angular-translate`, we can use translate filter as
 
-```
+``` html
 <h2>{{ 'HELLO' | translate }}</h2>
 ```
 
@@ -117,62 +118,14 @@ Another way using the directive is to pass the translation ID as attribute value
 <h2 translate="HELLO"></h2>
 ```
 
-##### Let App remember the language after refresh
-
-What if the user refreshed the page, the current scenario is to display the languages we set using `preferredLanguage`, but what if we want to display the languages to be the one the user set before the refresh, so our App can remember the language.
-
-We will use [angular-translate-storage-local] for that, first we can install the package with bower as:
-
-```
-bower install angular-translate-storage-local --save
-```
-
-This will also install `angular-cookies` and `angular-translate-storage-local` as a dependencies.
-
-our HTML file should be updated with the new files
-
-```
-<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
-<script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js"></script>
-<script src="bower_components/angular-translate-storage-local/angular-translate-storage-local.min.js"></script>
-```
-
-Our script file now looks like
-
-``` javascript
-var app = angular.module('Multilingual', [
-'pascalprecht.translate',
-'ngCookies'
-]);
-
-app.config(['$translateProvider', function($translateProvider) {
-
-  $translateProvider
-  .translations('en', {
-    'HELLO': 'Hello'
-  })
-  .translations('ar', {
-    'HELLO': 'مرحبا'
-  })
-  .preferredLanguage('ar')
-  .useLocalStorage()
-  .useSanitizeValueStrategy(null);
-
-}]);
-```
-
-The differences here are:
-
-* Add `ngCookies` as a dependency
-* Update `angular-translate` config to use `useLocalStorage()`
-
-##### write about `useMissingTranslationHandlerLog()`
-
 Sometimes we need to know if we have missed some translation ID, angular-translate provides a very good method which is `useMissingTranslationHandlerLog()` which logs warnings into console for any missing translation ID. Using this method directly on `$translateProvider` as
 
 ```
 $translateProvider.useMissingTranslationHandlerLog();
 ```
+
+
+##### load translation files asynchronously
 
 Another feature is that we can load our translation files in an asynchronous way Using staticFilesLoader, first we install the extension with bower:
 
@@ -242,6 +195,7 @@ app.config(['$translateProvider', function($translateProvider){
 }]);
 ```
 
+
 #### Switching between different languages
 
 Till now we worked only with label translations, how can we switch between two languages at runtime.
@@ -268,6 +222,53 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
 
   }]);
 ```
+
+##### Remember the language after page refresh
+
+What if the user did a page refresh, the current scenario is to get the languages defined using `preferredLanguage`. We can fix this by using a localStorage extension to let your Angular App remember the choosed language.
+
+We will use [angular-translate-storage-local] extension for that, first we can install the package with bower as:
+
+```
+bower install angular-translate-storage-local --save
+```
+
+This will also install `angular-cookies` and `angular-translate-storage-cookie` as a dependencies.
+
+The HTML file should be updated with the new dependencies
+
+``` html
+<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+<script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js"></script>
+<script src="bower_components/angular-translate-storage-local/angular-translate-storage-local.min.js"></script>
+```
+
+Our script file now looks like
+
+``` javascript
+var app = angular.module('Multilingual', [
+  'pascalprecht.translate',
+  'ngCookies'
+  ]);
+
+app.config(['$translateProvider', function($translateProvider){
+
+  $translateProvider
+  .useStaticFilesLoader({
+    prefix: '/translations/',
+    suffix: '.json'
+  })
+  .preferredLanguage('en')
+  .useLocalStorage()
+  .useMissingTranslationHandlerLog()
+
+}]);
+```
+
+The differences here are:
+
+* Add `ngCookies` as a dependency
+* Update `angular-translate` config to use `useLocalStorage()`
 
 #### CSS and changing App layout direction (RTL & LTR)
 #### Conclusion
