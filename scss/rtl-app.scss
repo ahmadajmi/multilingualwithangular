@@ -1,0 +1,15 @@
+//
+// Set float && direction, this is the default for RTL languages
+//
+
+$default-float:         right;
+$opposite-float:         left;
+
+$default-direction:       rtl;
+$opposite-direction:      ltr;
+
+//
+// Import the main style
+//
+
+@import 'style';

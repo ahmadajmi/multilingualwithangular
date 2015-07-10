@@ -3,28 +3,25 @@
 <head>
   <title>Multilingual</title>
   <meta charset="utf-8">
-  <link href="css/style.min.css" rel="stylesheet">
+  <link href="css/{{default_direction}}-app.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-  <div class="wrapper">
+  <div class="row">
 
-    <h2>{{ 'HELLO' | translate }}</h2>
+    <main class="column">
+      <h2>{{ 'HELLO' | translate }}</h2>
+    </main>
 
-    <h2 translate>HELLO</h2>
-    <h2 translate="HELLO"></h2>
+    <aside class="column">
+      <div ng-controller="LanguageSwitchController">
+        <button ng-show="lang == 'en'" ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button button-small"></button>
+        <button ng-show="lang == 'ar'" ng-click="changeLanguage('en')" translate="button_lang_en" class="button button-small"></button>
+      </div>
+    </aside>
 
-    <div ng-controller="LanguageSwitchController">
-
-      <!-- ng-show="lang == 'en'" -->
-
-      <button ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button button-small"></button>
-
-      <button ng-click="changeLanguage('en')" translate="button_lang_en" class="button button-small"></button>
-
-    </div>
-  </div>
+  </div><!-- row -->
 
   <script src="js/app.min.js"></script>
 </body>

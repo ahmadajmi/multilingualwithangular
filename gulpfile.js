@@ -15,7 +15,7 @@ var reload       = browserSync.reload;
 // SASS
 
 gulp.task('sass', function () {
-  return gulp.src('./css/*.scss')
+  return gulp.src(['./scss/ltr-app.scss', './scss/rtl-app.scss'])
   .pipe(sass())
   .pipe(rename({suffix: '.min'}))
   .pipe(minifycss())
@@ -51,8 +51,8 @@ gulp.task('serve', function() {
   });
 
   gulp.watch(['./index.html'], [reload]);
-  gulp.watch('./css/**/*.scss', ['sass', reload]);
-  gulp.watch('./js/**/*.js', ['js', reload]);
+  gulp.watch('./scss/**/*.scss', ['sass', reload]);
+  gulp.watch('./js/app.js', ['js', reload]);
 });
 
 

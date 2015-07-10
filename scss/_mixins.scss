@@ -1,0 +1,31 @@
+//
+// Inspired by https://github.com/anasnakawa/bi-app-sass
+//
+
+@mixin float($dir) {
+  @if $dir == left {
+    float: $default-float;
+    } @else if $dir == right {
+      float: $opposite-float;
+    } @else {
+      float: $dir;
+  }
+}
+
+@mixin text-align($dir) {
+  @if $dir == left {
+    text-align: $default-float;
+    } @else if $dir == right {
+      text-align: $opposite-float;
+    } @else {
+      text-align: $dir;
+  }
+}
+
+@mixin padding-left($unit) {
+  padding-#{$default-float}: $unit;
+}
+
+@mixin padding-right($unit) {
+  padding-#{$opposite-float}: $unit;
+}
