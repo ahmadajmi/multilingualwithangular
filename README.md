@@ -8,7 +8,7 @@ When we support more languages we need to do more things to our App, this will i
 
 #### Environment Setup
 
-First let's setup our development environment and add our dependencies, we will use bower to manage the project dependencies including [Angular.js] and [angular-translate]
+First let's setup our development environment and add our dependencies, we will use [bower] and [gulp] to manage the project dependencies.
 
 Let's setup bower with `bower init` in the Terminal and then install our packages. `bower init` will interactively create a `bower.json` file that will look like this
 
@@ -43,19 +43,61 @@ bower install angular --save
 bower install angular-translate --save
 ```
 
+Let's also setup Gulp and install the basic packages, first we need to scaffold a package.json file by running the following command and follow a simple steps to customize the package information.
+
+```
+npm init
+```
+
+Next, install Gulp within the project:
+
+```
+npm install gulp --save-dev
+```
+
+We will need some gulp dependencies mainly for for JavaScript and Sass
+
+```
+npm install gulp-sass --save-dev
+npm install gulp-uglify --save-dev
+npm install gulp-concat --save-dev
+```
+
+Create the file `Gulpfile.js` in the project directory, you can view the complete file at Github, but what's matter for this tutorial is the JavaScript and Sass tasks.
+
+In this JS task we will add the Angular and angular-translate, the main JS file then concatenate them together then uglify to produce a smaller file size.
+
+``` javascript
+gulp.task('js', function(){
+  return gulp.src([
+    './bower_components/angular/angular.js',
+    './bower_components/angular-translate/angular-translate.js',
+
+    './js/app.js'])
+    .pipe(concat('app.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./js'))
+});
+```
+
+We might append all JS files at the end of the HTML file, but we will end up with lots of requests and bigger files.
+
+``` html
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-translate/angular-translate.min.js"></script>
+```
+
 ``` html
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
   <title>Multilingual</title>
   <meta charset="utf-8">
-  <link href="style.css" rel="stylesheet">
+  <link href="style.min.css" rel="stylesheet">
 </head>
 
 <body>
-  <script src="bower_components/angular/angular.min.js"></script>
-  <script src="bower_components/angular-translate/angular-translate.min.js"></script>
-  <script src="js/script.js"></script>
+  <script src="js/app.min.js"></script>
 </body>
 </html>
 ```
@@ -118,16 +160,18 @@ Another way using the directive is to pass the translation ID as attribute value
 <h2 translate="HELLO"></h2>
 ```
 
-Sometimes we need to know if we have missed some translation ID, angular-translate provides a very good method which is `useMissingTranslationHandlerLog()` which logs warnings into console for any missing translation ID. Using this method directly on `$translateProvider` as
+Sometimes we need to know if we have missed some translation ID, `angular-translate` provides a very good method which is `useMissingTranslationHandlerLog()` which logs warnings into console for any missing translation ID. Using this method directly on `$translateProvider` as:
 
 ```
 $translateProvider.useMissingTranslationHandlerLog();
 ```
 
 
-##### load translation files asynchronously
+##### Load translation files asynchronously
 
-Another feature is that we can load our translation files in an asynchronous way Using staticFilesLoader, first we install the extension with bower:
+Instead of adding translation data for different languages in the config function, there is a better method to load them in an asynchronous and lazy loading.
+
+There are multiple ways to do this, one of them is to use the `angular-translate-loader-static-files` extension, first we need to install the extension with bower:
 
 ```
 bower install angular-translate-loader-static-files --save
@@ -139,7 +183,7 @@ Once installed we need to append the files to our HTML as
 <script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
 ```
 
-Now we can use `useStaticFilesLoader` method to tell angular-translate which language files to use using a specific pattern:
+Now we can use `useStaticFilesLoader` method to tell `angular-translate` which language files to load using a specific pattern:
 
 ```
 prefix - specifies file prefix
@@ -176,7 +220,7 @@ $translateProvider.useStaticFilesLoader({
 })
 ```
 
-And angular translate will concatenate the data we given to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in any case.
+And angular translate will concatenate our code to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in the second case.
 
 Using the first way, config method should be
 
@@ -270,7 +314,36 @@ The differences here are:
 * Add `ngCookies` as a dependency
 * Update `angular-translate` config to use `useLocalStorage()`
 
-#### CSS and changing App layout direction (RTL & LTR)
+#### Working with CSS and App layout direction (RTL & LTR)
+
+Comes to the presentation part, if you are working with two languages with the same writing directions (English & French), that would be great, but if one of the language direction is RTL and the other is LTR, we need do some extra work to adjust some layout scenarios.
+
+Let's say this is the code for the LTR language (English)
+
+``` css
+.media-image { padding-right: 1rem; }
+```
+
+When it comes to the RTL language, the above code should be mirrored to be `padding-left` instead of `padding-right`
+
+``` css
+.media-image { padding-left: 1rem; }
+```
+
+We may do something like this, but this is not a good practice and is time consuming in addition for code repetition and writhing code to override the original code.
+
+```css
+[lang='ar'] .media-image {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+```
+
+To solve this issue we need to write CSS that supports both RTL and LTR in an effective, automated and dynamic way so that we don’t have to repeat or override CSS. I wrote about [manage-rtl-css-sass-grunt] before, I encourage you to read it for more information about the issue and how to solve it.
+
+We will do the same thing but this time using Gulp.
+
+
 #### Conclusion
 
 #### Load different remote content based on the selected language
@@ -278,13 +351,15 @@ The differences here are:
 
 * Angular broadcast
 
-[bower]: http://bower.io/
-[angular-translate]: https://angular-translate.github.io/
-[HAML]: http://haml.info/
-[SASS]: http://sass-lang.com/
-[Gulp]: http://gulpjs.com/
-[Bower]: http://bower.io/
-[angular-translate-storage-local]: https://github.com/angular-translate/bower-angular-translate-storage-local
-[AngularJS]: https://angularjs.org/
-[asynchronous-loading]: http://angular-translate.github.io/docs/#/guide/12_asynchronous-loading
+[bower]:http://bower.io/
+[gulp]:http://gulpjs.com/
+[angular-translate]:https://angular-translate.github.io/
+[HAML]:http://haml.info/
+[SASS]:http://sass-lang.com/
+[Gulp]:http://gulpjs.com/
+[Bower]:http://bower.io/
+[angular-translate-storage-local]:https://github.com/angular-translate/bower-angular-translate-storage-local
+[AngularJS]:https://angularjs.org/
+[asynchronous-loading]:http://angular-translate.github.io/docs/#/guide/12_asynchronous-loading
 [translate-directive]:https://angular-translate.github.io/docs/#/guide/05_using-translate-directive
+[manage-rtl-css-sass-grunt]:http://www.sitepoint.com/manage-rtl-css-sass-grunt/
