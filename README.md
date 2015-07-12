@@ -4,13 +4,13 @@ You are building a Single Page Application with Angularjs that require a multili
 
 When we support more languages we need to do more things to our App, this will include translating App text, change layout direction (RTL & LTR) and in some cases load different content based on the selected language.
 
-#### Environment Setup
+## Environment Setup
 
-First let's setup our development environment, we will use [bower] and [gulp] to manage the project dependencies.
+A quick overview of the development environment and how to set it up, we will use [bower] and [gulp] to manage the project dependencies, so a basic knowledge of them would be great.
 
-Let's setup bower with [bower init] in the Terminal and then install our packages. `bower init` will interactively create a manifest file `bower.json`.
+Let's setup bower by running [bower init] in the command line and then install our packages. `bower init` will interactively create a manifest file `bower.json`.
 
-The next step is to install the initial bower packages.
+The next step is to install the initial required packages.
 
 ```
 bower install angular --save
@@ -25,7 +25,7 @@ Next, install Gulp within the project:
 npm install gulp --save-dev
 ```
 
-We will need some gulp dependencies mainly for for JavaScript and Sass
+We will need some gulp dependencies mainly for for JavaScript and Sass.
 
 ```
 npm install gulp-sass --save-dev
@@ -65,16 +65,17 @@ gulp.task('js', function(){
 </html>
 ```
 
-#### Adding translation using angular-translate
+## Adding translation using angular-translate
 
-The first step is to add translation support for App text, we will work with Arabic and English as our main languages, the two languages are different in the way of writing and the writing direction, Arabic (RTL) English (LTR).
+The first step is to add translation support for Application text, we will work with Arabic and English as our main languages, the two languages are different in the way of writing and the writing direction, Arabic (RTL) English (LTR).
 
-[angular-translate] is an [AngularJS] module that makes it very easy to translate our App text, it provides many features like filters and directives, asynchronous loading of i18n data and more.
+[angular-translate] is an [AngularJS] module that makes it very easy to translate the text, it provides many features like filters and directives, asynchronous loading of i18n data and more.
 
-Let's setup Angular and configure it with angular-translate
+Let's setup Angular and configure it with `angular-translate`
 
 ``` javascript
-'use strict';
+
+// js/app.js
 
 var app = angular.module('Multilingual', ['pascalprecht.translate']);
 
@@ -93,18 +94,18 @@ app.config(['$translateProvider', function($translateProvider){
 ```
 
 ``` html
-<html lang="en" ng-app="Multilingual">
+<html ng-app="Multilingual">
 ```
 
-What we did is:
+What we did:
 
 * Create an Angular module called `Multilingual`
 * Inject `angular-translate` module as a dependency into your App as `pascalprecht.translate`
-* Inject `$translateProvider` in the config function
-* Register translation tables in different languages as a key value and don't forget to set the language key such as `en` or `ar` as first parameter.
-* Set the preferred language using `preferredLanguage(langKey)`, this is important as we use more than one language so we can teach `angular-translate` which one to use on first load.
+* Inject `$translateProvider` in the `.config()` method
+* Register the translation tables in different languages using the `.translations()` method setting the language key such as `en` or `ar` as the first parameter.
+* Set the preferred language using `.preferredLanguage()` method, this is important as we use more than one language so we can teach `angular-translate` which one to use on first load.
 
-Let's see an example using `angular-translate`, we can use translate filter as
+Let's see an example of `angular-translate` using the `translate` filter
 
 ``` html
 <h2>{{ 'HELLO' | translate }}</h2>
@@ -116,7 +117,7 @@ A better way is to use the `translate` directive, using the directive is better 
 <h2 translate>HELLO</h2>
 ```
 
-Another way using the directive is to pass the translation ID as attribute value of the `translate` directive.
+Another way of using the directive is to pass the translation ID as attribute value of the `translate` directive.
 
 ``` html
 <h2 translate="HELLO"></h2>
@@ -124,12 +125,12 @@ Another way using the directive is to pass the translation ID as attribute value
 
 Sometimes we need to know if we have missed some translation ID, `angular-translate` provides a very good method which is `useMissingTranslationHandlerLog()` which logs warnings into console for any missing translation ID. Using this method directly on `$translateProvider` as:
 
-```
+``` javascript
 $translateProvider.useMissingTranslationHandlerLog();
 ```
 
 
-##### Load translation files asynchronously
+### Load translation files asynchronously
 
 Instead of adding translation data for different languages in the config function, there is a better method to load them in an asynchronous and lazy loading.
 
@@ -202,18 +203,15 @@ app.config(['$translateProvider', function($translateProvider){
 ```
 
 
-#### Switching between different languages
+## Switching between different languages
 
 Till now we worked only with label translations, how can we switch between two languages at runtime.
 
 ``` html
-  <div ng-controller="LanguageSwitchController">
-
-    <button ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button"></button>
-
-    <button ng-click="changeLanguage('en')" translate="button_lang_en" class="button"></button>
-
-  </div>
+<div ng-controller="LanguageSwitchController">
+  <button ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button"></button>
+  <button ng-click="changeLanguage('en')" translate="button_lang_en" class="button"></button>
+</div>
 ```
 
 By creating a new controller we can switch the language at runtime, `anular-translate` provides a handy method `use` that takes a parameter and sets
@@ -221,15 +219,13 @@ By creating a new controller we can switch the language at runtime, `anular-tran
 ``` javascript
 app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate',
   function($scope, $rootScope, $translate) {
-
     $scope.changeLanguage = function(langKey) {
       $translate.use(langKey);
-    };
-
-  }]);
+  };
+}]);
 ```
 
-##### Remember the language after page refresh
+## Remember the language after page refresh
 
 What if the user did a page refresh, the current scenario is to get the languages defined using `preferredLanguage`. We can fix this by using a localStorage extension to let your Angular App remember the choosed language.
 
@@ -276,7 +272,7 @@ The differences here are:
 * Add `ngCookies` as a dependency
 * Update `angular-translate` config to use `useLocalStorage()`
 
-#### Working with CSS and App layout direction (RTL & LTR)
+## Working with CSS and App layout direction (RTL & LTR)
 
 Comes to the presentation part, if you are working with two languages with the same writing directions (English & French), that would be great, but if one of the language direction is RTL and the other is LTR, we need do some extra work to adjust some layout scenarios.
 
@@ -305,11 +301,8 @@ To solve this issue we need to write CSS that supports both RTL and LTR in an ef
 
 We will do the same thing but this time using Gulp.
 
-
-#### Conclusion
-
-#### Load different remote content based on the selected language
-#### Conclusion
+## Load different remote content based on the selected language
+## Conclusion
 
 * Angular broadcast
 
