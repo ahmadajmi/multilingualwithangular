@@ -79,7 +79,7 @@ Let's setup Angular and configure it with `angular-translate`
 
 var app = angular.module('Multilingual', ['pascalprecht.translate']);
 
-app.config(['$translateProvider', function($translateProvider){
+app.config(['$translateProvider', function($translateProvider) {
 
   $translateProvider
   .translations('en', {
@@ -111,7 +111,7 @@ Let's see an example of `angular-translate` using the `translate` filter
 <h2>{{ 'HELLO' | translate }}</h2>
 ```
 
-A better way is to use the `translate` directive, using the directive is better than using the filter as described in [translate-directive] docs.
+A better way is to use the `translate` directive, using the directive is better than using the filter as described in [translate-directive] documentation.
 
 ``` html
 <h2 translate>HELLO</h2>
@@ -132,7 +132,7 @@ $translateProvider.useMissingTranslationHandlerLog();
 
 ### Load translation files asynchronously
 
-Instead of adding translation data for different languages in the config function, there is a better method to load them in an asynchronous and lazy loading.
+Instead of adding translation data for different languages in the `.config()` method, there is another way to load them in an asynchronous and lazy loading.
 
 There are multiple ways to do this, one of them is to use the `angular-translate-loader-static-files` extension, first we need to install the extension with bower:
 
@@ -140,10 +140,20 @@ There are multiple ways to do this, one of them is to use the `angular-translate
 bower install angular-translate-loader-static-files --save
 ```
 
-Once installed we need to append the files to our HTML as
+Once installed we need to update the gulp task with the extension file path.
 
-```
-<script src="bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
+``` javascript
+gulp.task('js', function(){
+  return gulp.src([
+    './bower_components/angular/angular.js',
+    './bower_components/angular-translate/angular-translate.js',
+    'bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+
+    './js/app.js'])
+    .pipe(concat('app.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./js'))
+});
 ```
 
 Now we can use `useStaticFilesLoader` method to tell `angular-translate` which language files to load using a specific pattern:
@@ -161,11 +171,28 @@ translations
 └── en.json
 ```
 
+``` json
+
+//en.json
+
+{
+  "HELLO": "Hello",
+  "button_lang_ar": "Arabic",
+  "button_lang_en": "English"
+}
+```
+
 ``` javascript
-$translateProvider.useStaticFilesLoader({
-  prefix: '/translations/',
-  suffix: '.json'
-})
+app.config(['$translateProvider', function($translateProvider){
+
+  $translateProvider.useStaticFilesLoader({
+    prefix: '/translations/',
+    suffix: '.json'
+  })
+  .preferredLanguage('ar')
+  .useMissingTranslationHandlerLog();
+
+}]);
 ```
 
 If we want to add a prefix to files we can do something like this
@@ -177,33 +204,22 @@ translations
 ```
 
 ``` javascript
-$translateProvider.useStaticFilesLoader({
-  prefix: '/translations/locale-',
-  suffix: '.json'
-})
-```
-
-And angular translate will concatenate our code to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in the second case.
-
-Using the first way, config method should be
-
-``` javascript
 app.config(['$translateProvider', function($translateProvider){
 
-  $translateProvider
-  .useStaticFilesLoader({
-    prefix: '/translations/',
+  $translateProvider.useStaticFilesLoader({
+    prefix: '/translations/locale-',
     suffix: '.json'
   })
-  .preferredLanguage('en')
-  .useLocalStorage()
+  .preferredLanguage('ar')
   .useMissingTranslationHandlerLog();
 
 }]);
 ```
 
+And angular translate will concatenate our code to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in the second case.
 
-## Switching between different languages
+
+### Switching between different languages
 
 Till now we worked only with label translations, how can we switch between two languages at runtime.
 
@@ -225,27 +241,37 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
 }]);
 ```
 
-## Remember the language after page refresh
+### Remember the language after page refresh
 
-What if the user did a page refresh, the current scenario is to get the languages defined using `preferredLanguage`. We can fix this by using a localStorage extension to let your Angular App remember the choosed language.
+What if the user did a page refresh, the current scenario is to show the language we defined using `preferredLanguage`, but if the user selected another language then he closed the App or did a page refresh, we need the user to continue use his selected language where he left off. We can fix this by using the browser localStorage to store the selected language and then use it so our app can remember which language the user have chosen the last time.
 
-We will use [angular-translate-storage-local] extension for that, first we can install the package with bower as:
+We will use [angular-translate-storage-local] extension for that, first install the package with bower:
 
 ```
 bower install angular-translate-storage-local --save
 ```
 
-This will also install `angular-cookies` and `angular-translate-storage-cookie` as a dependencies.
+This will also install `angular-cookies` and `angular-translate-storage-cookie`as a dependencies, once installed we need to update the gulp task with the new files.
 
-The HTML file should be updated with the new dependencies
+``` javascript
+gulp.task('js', function(){
+  return gulp.src([
+    './bower_components/angular/angular.js',
+    './bower_components/angular-translate/angular-translate.js',
+    './bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+    './bower_components/angular-cookies/angular-cookies.min.js',
+    './bower_components/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js',
+    './bower_components/bower_components/angular-translate-storage-local/angular-translate-storage-local.min.js',
 
-``` html
-<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
-<script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js"></script>
-<script src="bower_components/angular-translate-storage-local/angular-translate-storage-local.min.js"></script>
+    './js/app.js'])
+    .pipe(concat('app.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./js'))
+});
 ```
 
-Our script file now looks like
+* Add `ngCookies` as a dependency
+* Tell `$translateProvider` to use the localStorage via `useLocalStorage()`
 
 ``` javascript
 var app = angular.module('Multilingual', [
@@ -267,10 +293,9 @@ app.config(['$translateProvider', function($translateProvider){
 }]);
 ```
 
-The differences here are:
+What `angular-translate` will do is to save a language key with a specific language ID, then it will retrieve it the next time the users opens the app.
 
-* Add `ngCookies` as a dependency
-* Update `angular-translate` config to use `useLocalStorage()`
+`angular-translate` will store the initial language as we st it using `.preferredLanguage('en')` and then update it any time the user switches the language.
 
 ## Working with CSS and App layout direction (RTL & LTR)
 
