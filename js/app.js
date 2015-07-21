@@ -5,7 +5,7 @@ var app = angular.module('Multilingual', [
   'ngCookies'
   ]);
 
-app.run(['$rootScope', function($rootScope){
+app.run(['$rootScope', function($rootScope) {
   $rootScope.lang = 'en';
 
   $rootScope.isLangChanged = false;
@@ -18,7 +18,7 @@ app.run(['$rootScope', function($rootScope){
 
 }])
 
-app.config(['$translateProvider', function($translateProvider){
+app.config(['$translateProvider', function($translateProvider) {
 
   $translateProvider
   .useStaticFilesLoader({
@@ -34,6 +34,7 @@ app.config(['$translateProvider', function($translateProvider){
 
 app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate', '$timeout',
   function($scope, $rootScope, $translate, $timeout) {
+
     $scope.changeLanguage = function(langKey) {
       $rootScope.isLangChanged = false;
       $translate.use(langKey);
@@ -41,13 +42,7 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
 
     $rootScope.$on('$translateChangeSuccess', function(event, data) {
 
-      document.documentElement.setAttribute('lang', data.language);
-
-      // $timeout(function() {
-        console.log($rootScope.isLangChanged);
-        $rootScope.isLangChanged = true;
-        console.log($rootScope.isLangChanged);
-      // }, 1000);
+      $rootScope.isLangChanged = true;
 
       var language = data.language;
 
