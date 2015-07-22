@@ -222,7 +222,7 @@ And angular translate will concatenate our code to `{{prefix}}{{langKey}}{{suffi
 
 ### Switching between different languages
 
-Till now we worked only with label translations, how can we switch between two languages at runtime.
+Till now we have worked only with label translations, how can we switch between two languages at runtime. We will need to add a way to switch to the other language by adding a button for every language.
 
 ``` html
 <div ng-controller="LanguageSwitchController">
@@ -231,20 +231,57 @@ Till now we worked only with label translations, how can we switch between two l
 </div>
 ```
 
-By creating a new controller we can switch the language at runtime, `anular-translate` provides a handy method `use` that takes a parameter and sets
+At this point we can also create some `$rootScope` properties so we can use them on HTMl to setup initial layout direction and `lang` attribute in the first load and bind them later whenever the language change.
+
+``` javascript
+app.run(['$rootScope', function($rootScope) {
+  $rootScope.lang = 'en';
+
+  $rootScope.default_float = 'left';
+  $rootScope.opposite_float = 'right';
+
+  $rootScope.default_direction = 'ltr';
+  $rootScope.opposite_direction = 'rtl';
+}])
+```
+
+``` html
+<html lang="{{ lang }}" ng-app="Multilingual">
+```
+
+Used in HTML as [helper classes](http://www.sitepoint.com/using-helper-classes-dry-scale-css/)
+
+``` html
+<div class="text-{{ default_float }}"></div>
+```
+
+`anular-translate` provides a handy method `use` that takes a parameter and sets the language for us based on the passed parameter. Also listen to the `$translateChangeSuccess` event that gets fired once the a translation change was successful to make sure the language has changed and then we can modify the `$rootScope` properties.
 
 ``` javascript
 app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate',
   function($scope, $rootScope, $translate) {
     $scope.changeLanguage = function(langKey) {
       $translate.use(langKey);
-  };
+    };
+
+    $rootScope.$on('$translateChangeSuccess', function(event, data) {
+      var language = data.language;
+
+      $rootScope.lang = language;
+
+      $rootScope.default_direction = language === 'ar' ? 'rtl' : 'ltr';
+      $rootScope.opposite_direction = language === 'ar' ? 'ltr' : 'rtl';
+
+      $rootScope.default_float = language === 'ar' ? 'right' : 'left';
+      $rootScope.opposite_float = language === 'ar' ? 'left' : 'right';
+    });
 }]);
 ```
 
+
 ### Remember the language after page refresh
 
-What if the user did a page refresh, the current scenario is to show the language we defined using `preferredLanguage`, but if the user selected another language then he closed the App or did a page refresh, we need the user to continue use his selected language where he left off. We can fix this by using the browser localStorage to store the selected language and then use it so our app can remember which language the user have chosen the last time.
+What if the user did a page refresh, the current scenario is to show the language we defined using `preferredLanguage`, but if the user selected another language then he closed the App or did a page refresh, we need the user to continue use his selected language where he left off. We can fix this by using the browser localStorage to store the selected language and then use it so our App can remember which language the user have chosen the last time.
 
 We will use [angular-translate-storage-local] extension for that, first install the package with bower:
 
@@ -280,7 +317,7 @@ var app = angular.module('Multilingual', [
   'ngCookies'
   ]);
 
-app.config(['$translateProvider', function($translateProvider){
+app.config(['$translateProvider', function($translateProvider) {
 
   $translateProvider
   .useStaticFilesLoader({
@@ -327,10 +364,8 @@ To solve this issue we need to write CSS that supports both RTL and LTR in an ef
 
 We will do the same thing but this time using Gulp.
 
-## Load different remote content based on the selected language
 ## Conclusion
 
-* Angular broadcast
 
 [bower]:http://bower.io/
 [gulp]:http://gulpjs.com/
