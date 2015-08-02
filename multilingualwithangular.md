@@ -1,8 +1,8 @@
 ## Multilingual support for Angularjs
 
-You are building a Single Page Application with Angularjs that require a multilingual support with more than one language so the user can switch instantly between languages without refreshing the page.
+You are building a Single Page Application with Angularjs that requires a multilingual support with more than one language then the user can switch instantly between languages without refreshing the page.
 
-When we support more languages we need to do more things to our App, this will include translating App text, change layout direction (RTL & LTR) and in some cases load different content based on the selected language.
+When we support more languages we need to do more things to our App, this will include translating App text, switching instantly between different languages, change layout direction (RTL & LTR). In this tutorial we will go through theses steps and see how add a multilingual support to Angularjs applications.
 
 ## Environment Setup
 
@@ -360,9 +360,79 @@ We may do something like this, but this is not a good practice and is time consu
 }
 ```
 
-To solve this issue we need to write CSS that supports both RTL and LTR in an effective, automated and dynamic way so that we don’t have to repeat or override CSS. I wrote about [manage-rtl-css-sass-grunt] before, I encourage you to read it for more information about the issue and how to solve it.
+To solve this issue we need to write CSS that supports both RTL and LTR in an effective, automated and dynamic way so that we don’t have to repeat or override CSS. I wrote about [manage-rtl-css-sass-grunt] before and I encourage you to read it for more information about the issue and how to solve it.
 
-We will do the same thing but this time using Gulp.
+We will do the same thing here but this time using Gulp. Adding a sass task that takes `ltr-app.scss` and `rtl-app.scss` and inside them we will import the main sass file in addition to direction specific variables.
+
+``` javascript
+gulp.task('sass', function () {
+  return gulp.src(['./scss/ltr-app.scss', './scss/rtl-app.scss'])
+  .pipe(sass())
+  .pipe(gulp.dest('./css'));
+});
+```
+
+`ltr-app.scss` file should be
+
+``` sass
+// LTR language directions.
+$default-float:          left;
+$opposite-float:        right;
+
+$default-direction:       ltr;
+$opposite-direction:      rtl;
+
+@import 'style';
+```
+
+And `rtl-app.scss`
+
+``` sass
+// RTL language directions.
+$default-float:         right;
+$opposite-float:         left;
+
+$default-direction:       rtl;
+$opposite-direction:      ltr;
+
+@import 'style';
+```
+
+And this is an example of what style.scss looks like.
+
+``` css
+body {
+  direction: $default-direction;
+}
+
+.column { float: $default-float; }
+```
+
+After we run the sass gulp task we will get two files that are (without magnification)
+
+``` css
+/* ltr-app.css */
+body {
+  direction: ltr;
+}
+
+.column { float: left; }
+```
+
+``` css
+/* rtl-app.css */
+body {
+  direction: rtl;
+}
+
+.column { float: right; }
+```
+
+The next step is to uses these generated files dynamically based on the current language. We will use the `default_direction` we created above to set the direction in the first load and then bind it when we change the language.
+
+``` html
+<link href="css/{{ default_direction }}-app.css" rel="stylesheet">
+```
 
 ## Conclusion
 

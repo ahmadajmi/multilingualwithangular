@@ -17,8 +17,6 @@ var reload       = browserSync.reload;
 gulp.task('sass', function () {
   return gulp.src(['./scss/ltr-app.scss', './scss/rtl-app.scss'])
   .pipe(sass())
-  .pipe(rename({suffix: '.min'}))
-  .pipe(minifycss())
   .pipe(gulp.dest('./css'));
 });
 
