@@ -1,6 +1,6 @@
-## Multilingual support for Angularjs
+## Multilingual Support for Angularjs
 
-You are building a Single Page Application with Angularjs that requires a multilingual support with more than one language then the user can switch instantly between languages without refreshing the page.
+You are building a Single Page Application with Angularjs that requires a multilingual support with more than one language so the user can switch instantly between languages without refreshing the page.
 
 When we support more languages we need to do more things to our App, this will include translating App text, switching instantly between different languages, change layout direction (RTL & LTR). In this tutorial we will go through theses steps and see how add a multilingual support to Angularjs applications.
 
@@ -66,7 +66,7 @@ gulp.task('js', function(){
 ```
 
 
-## Adding translation using angular-translate
+## Adding Translation Using Angular-translate
 
 The first step is to add translation support for Application text, we will work with Arabic and English as our main languages, the two languages are different in the way of writing and the writing direction, Arabic (RTL) English (LTR).
 
@@ -131,7 +131,7 @@ $translateProvider.useMissingTranslationHandlerLog();
 ```
 
 
-## Load translation files asynchronously
+### Load Translation Files Asynchronously
 
 Instead of adding translation data for different languages in the `.config()` method, there is another way to load them in an asynchronous and lazy loading.
 
@@ -220,7 +220,7 @@ app.config(['$translateProvider', function($translateProvider){
 And angular translate will concatenate our code to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in the second case.
 
 
-## Switching between different languages
+### Switching Between Different Languages
 
 Till now we have worked only with label translations, how can we switch between two languages at runtime. We will need to add a way to switch to the other language by adding a button for every language.
 
@@ -279,7 +279,7 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
 ```
 
 
-## Remember the language after page refresh
+### Remember the Language after Page Refresh
 
 What if the user did a page refresh, the current scenario is to show the language we defined using `preferredLanguage`, but if the user selected another language then he closed the App or did a page refresh, we need the user to continue use his selected language where he left off. We can fix this by using the browser localStorage to store the selected language and then use it so our App can remember which language the user have chosen the last time.
 
@@ -335,7 +335,7 @@ What `angular-translate` will do is to save a language key with a specific langu
 
 `angular-translate` will store the initial language as we st it using `.preferredLanguage('en')` and then update it any time the user switches the language.
 
-## Working with CSS and App layout direction (RTL & LTR)
+## Working with CSS and App Layout Direction (RTL & LTR)
 
 Comes to the presentation part, if you are working with two languages with the same writing directions (English & French), that would be great, but if one of the language direction is RTL and the other is LTR, we need do some extra work to adjust some layout scenarios.
 
@@ -433,6 +433,7 @@ The next step is to uses these generated files dynamically based on the current 
 ``` html
 <link href="css/{{ default_direction }}-app.css" rel="stylesheet">
 ```
+
 
 ## Conclusion
 
