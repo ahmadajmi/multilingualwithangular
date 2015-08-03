@@ -1,14 +1,14 @@
 ## Multilingual Support for Angularjs
 
-You are building a Single Page Application with Angularjs that requires a multilingual support with more than one language so the user can switch instantly between languages without refreshing the page.
+You are building a Single Page Application with Angularjs that requires a multilingual support with more than one language so the user can switch instantly between languages without refreshing the page, in that case we need to do more things to our App, this will include translating App text, switching instantly between different languages, change layout direction (RTL & LTR).
 
-When we support more languages we need to do more things to our App, this will include translating App text, switching instantly between different languages, change layout direction (RTL & LTR). In this tutorial we will go through theses steps and see how add a multilingual support to Angularjs applications.
+In this tutorial we will go through theses steps and see how to add a multilingual support to any Angularjs App.
 
 ## Environment Setup
 
-A quick overview of the development environment and how to set it up, we will use [bower] and [gulp] to manage the project dependencies, so a basic knowledge of them would be great.
+In order to make our development environment more automated and flexible we will use [Bower] and [Gulp] to manage the project dependencies, if they are not installed on your system or you still didn't use them in your development workflow, I highly recommend to install and learn more about them.
 
-Let's setup bower by running [bower init] in the command line and then install our packages, `bower init` will interactively create a manifest file [bower.json]
+Let's setup Bower by running `bower init` in the command line inside a project directory, let's call it `multilingualwithangular`. [bower init] will interactively create a manifest file called [bower.json] which will include some information about the project as well as a list of installed front-end dependencies.
 
 The next step is to install the initial required packages.
 
@@ -17,7 +17,7 @@ bower install angular --save
 bower install angular-translate --save
 ```
 
-Let's setup [Gulp] and install the basic packages, first we need to scaffold a `package.json` file by running `npm init` command and follow a simple steps to customize [package.json] file.
+Let's setup Gulp and install the basic packages, first we need to run  `npm init` command line and follow a simple steps to create [package.json] file which will include some information about the project and managing Node.js modules.
 
 Next, install Gulp within the project:
 
@@ -25,19 +25,28 @@ Next, install Gulp within the project:
 npm install gulp --save-dev
 ```
 
-We will need some gulp dependencies mainly for for JavaScript and Sass.
+We will need some gulp dependencies for JavaScript and SASS and other automation tools.
 
 ```
 npm install gulp-sass --save-dev
 npm install gulp-uglify --save-dev
 npm install gulp-concat --save-dev
+npm install run-sequence --save-dev
 ```
 
-Create a `Gulpfile.js` file in the project directory, you can view the complete file on [Github](https://github.com/ahmadajmi/multilingualwithangular/blob/master/gulpfile.js).
+Create an empty `gulpfile.js` configuration file within the project directory which is used to define our gulp tasks such as JavaScript and SASS. You can view the complete file on [Github](https://github.com/ahmadajmi/multilingualwithangular/blob/master/gulpfile.js).
 
-In JavaScript task we will add `angular` and `angular-translate` files plus the main JavaScript file then concatenate them together and finally uglify to minify and produce a smaller file size.
+In JavaScript task we will add `angular` and `angular-translate` files plus the main JavaScript file inside a `/js` directory then concatenate them together and uglify to minify and produce a smaller file size.
 
 ``` javascript
+'use strict';
+
+var gulp         = require('gulp');
+var sass         = require('gulp-sass');
+var runSequence  = require('run-sequence');
+var concat       = require('gulp-concat');
+var uglify       = require('gulp-uglify');
+
 gulp.task('js', function(){
   return gulp.src([
     './bower_components/angular/angular.js',
@@ -48,7 +57,15 @@ gulp.task('js', function(){
     .pipe(uglify())
     .pipe(gulp.dest('./js'))
 });
+
+gulp.task('build', [], function() {
+  runSequence('js');
+});
+
+gulp.task('default', ['build'], function() {});
 ```
+
+At this point if we run the `gulp build` task we created above, it will run the `js` task and then generate `/js/app.min.js` file so we can include it in a simple `HTML` file.
 
 ``` html
 <!DOCTYPE HTML>
@@ -56,7 +73,6 @@ gulp.task('js', function(){
 <head>
   <title>Multilingual</title>
   <meta charset="utf-8">
-  <link href="style.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -442,17 +458,16 @@ As we saw using [angular-translate] is the way to go when it comes to Angularjs 
 I’ve created a Github repo for this article. You can check out the code at [multilingualwithangular].
 
 
-[bower]:http://bower.io/
-[gulp]:http://gulpjs.com/
+[Gulp]:http://gulpjs.com/
+[Bower]:http://bower.io/
 [bower init]:http://bower.io/docs/creating-packages/
 [bower.json]:https://github.com/ahmadajmi/multilingualwithangular/blob/master/bower.json
 [package.json]:https://github.com/ahmadajmi/multilingualwithangular/blob/master/package.json
 [install-gulp]:https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md
+[npm]:https://www.npmjs.com/
 [angular-translate]:https://angular-translate.github.io/
 [HAML]:http://haml.info/
 [SASS]:http://sass-lang.com/
-[Gulp]:http://gulpjs.com/
-[Bower]:http://bower.io/
 [angular-translate-storage-local]:https://github.com/angular-translate/bower-angular-translate-storage-local
 [AngularJS]:https://angularjs.org/
 [asynchronous-loading]:http://angular-translate.github.io/docs/#/guide/12_asynchronous-loading

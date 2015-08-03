@@ -8,12 +8,10 @@
 var gulp         = require('gulp');
 var watch        = require('gulp-watch');
 var sass         = require('gulp-sass');
-var minifycss    = require('gulp-minify-css');
 var browserSync  = require('browser-sync');
 var runSequence  = require('run-sequence');
 var concat       = require('gulp-concat');
 var uglify       = require('gulp-uglify')
-var rename       = require('gulp-rename');
 var reload       = browserSync.reload;
 
 
