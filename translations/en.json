@@ -1,5 +1,6 @@
 {
   "HELLO": "Hello",
   "button_lang_ar": "Arabic",
-  "button_lang_en": "English"
+  "button_lang_en": "English",
+  "welcome_message": "Welcome to the Angularjs multilingual site"
 }

@@ -131,7 +131,7 @@ $translateProvider.useMissingTranslationHandlerLog();
 ```
 
 
-### Load translation files asynchronously
+## Load translation files asynchronously
 
 Instead of adding translation data for different languages in the `.config()` method, there is another way to load them in an asynchronous and lazy loading.
 
@@ -220,7 +220,7 @@ app.config(['$translateProvider', function($translateProvider){
 And angular translate will concatenate our code to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in the second case.
 
 
-### Switching between different languages
+## Switching between different languages
 
 Till now we have worked only with label translations, how can we switch between two languages at runtime. We will need to add a way to switch to the other language by adding a button for every language.
 
@@ -279,7 +279,7 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
 ```
 
 
-### Remember the language after page refresh
+## Remember the language after page refresh
 
 What if the user did a page refresh, the current scenario is to show the language we defined using `preferredLanguage`, but if the user selected another language then he closed the App or did a page refresh, we need the user to continue use his selected language where he left off. We can fix this by using the browser localStorage to store the selected language and then use it so our App can remember which language the user have chosen the last time.
 
@@ -436,6 +436,10 @@ The next step is to uses these generated files dynamically based on the current 
 
 ## Conclusion
 
+As we saw using [angular-translate] is the way to go when it comes to Angularjs translation, it offers a lot of handy filters, directives and other tools to use and we have covered the translation process in many different ways like switching between languages, store selected language in user browser storage and then working with CSS to make the presentation layer more responsive with language directions.
+
+I’ve created a Github repo for this article. You can check out the code at [multilingualwithangular].
+
 
 [bower]:http://bower.io/
 [gulp]:http://gulpjs.com/
@@ -453,3 +457,4 @@ The next step is to uses these generated files dynamically based on the current 
 [asynchronous-loading]:http://angular-translate.github.io/docs/#/guide/12_asynchronous-loading
 [translate-directive]:https://angular-translate.github.io/docs/#/guide/05_using-translate-directive
 [manage-rtl-css-sass-grunt]:http://www.sitepoint.com/manage-rtl-css-sass-grunt/
+[multilingualwithangular]:https://github.com/ahmadajmi/multilingualwithangular

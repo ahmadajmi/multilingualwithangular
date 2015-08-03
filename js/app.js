@@ -15,7 +15,6 @@ app.run(['$rootScope', function($rootScope) {
 
   $rootScope.default_direction = 'ltr';
   $rootScope.opposite_direction = 'rtl';
-
 }])
 
 app.config(['$translateProvider', function($translateProvider) {

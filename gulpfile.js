@@ -1,4 +1,9 @@
-// Include Gulp & Tools
+'use strict';
+
+
+// -----------------------------------------------------------------------------
+// Dependencies
+// -----------------------------------------------------------------------------
 
 var gulp         = require('gulp');
 var watch        = require('gulp-watch');
@@ -12,7 +17,9 @@ var rename       = require('gulp-rename');
 var reload       = browserSync.reload;
 
 
+// -----------------------------------------------------------------------------
 // SASS
+// -----------------------------------------------------------------------------
 
 gulp.task('sass', function () {
   return gulp.src(['./scss/ltr-app.scss', './scss/rtl-app.scss'])
@@ -21,9 +28,11 @@ gulp.task('sass', function () {
 });
 
 
-// Lint JavaScript
+// -----------------------------------------------------------------------------
+// JavaScript
+// -----------------------------------------------------------------------------
 
-gulp.task('js', function(){
+gulp.task('js', function() {
   return gulp.src([
     './bower_components/angular/angular.js',
     './bower_components/angular-translate/angular-translate.js',
@@ -39,7 +48,9 @@ gulp.task('js', function(){
 });
 
 
+// -----------------------------------------------------------------------------
 // Watch Files & Reload
+// -----------------------------------------------------------------------------
 
 gulp.task('serve', function() {
   browserSync({
@@ -54,14 +65,18 @@ gulp.task('serve', function() {
 });
 
 
+// -----------------------------------------------------------------------------
 // Build
+// -----------------------------------------------------------------------------
 
 gulp.task('build', [], function() {
   runSequence('sass', 'js');
 });
 
 
+// -----------------------------------------------------------------------------
 // Gulp Default
+// -----------------------------------------------------------------------------
 
 gulp.task('default', [], function() {
   gulp.start('serve');

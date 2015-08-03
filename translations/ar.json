@@ -1,5 +1,6 @@
 {
   "HELLO": "مرحبا",
   "button_lang_ar": "العربية",
-  "button_lang_en": "الإنجليزية"
+  "button_lang_en": "الإنجليزية",
+  "welcome_message": "مرحباً في موقع Angularjs المتعدد اللغات"
 }
