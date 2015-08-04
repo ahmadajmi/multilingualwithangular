@@ -32,6 +32,7 @@ npm install gulp-sass --save-dev
 npm install gulp-uglify --save-dev
 npm install gulp-concat --save-dev
 npm install run-sequence --save-dev
+npm install browser-sync --save-dev
 ```
 
 Create an empty `gulpfile.js` configuration file within the project directory which is used to define our gulp tasks such as JavaScript and SASS. You can view the complete file on [Github](https://github.com/ahmadajmi/multilingualwithangular/blob/master/gulpfile.js).
@@ -43,9 +44,10 @@ In JavaScript task we will add `angular` and `angular-translate` files plus the 
 
 var gulp         = require('gulp');
 var sass         = require('gulp-sass');
-var runSequence  = require('run-sequence');
 var concat       = require('gulp-concat');
 var uglify       = require('gulp-uglify');
+var runSequence  = require('run-sequence');
+var browserSync  = require('browser-sync');
 
 gulp.task('js', function(){
   return gulp.src([
@@ -58,6 +60,14 @@ gulp.task('js', function(){
     .pipe(gulp.dest('./js'))
 });
 
+gulp.task('serve', function() {
+  browserSync({
+    server: {
+      baseDir: "./"
+    }
+  });
+});
+
 gulp.task('build', [], function() {
   runSequence('js');
 });
@@ -65,7 +75,7 @@ gulp.task('build', [], function() {
 gulp.task('default', ['build'], function() {});
 ```
 
-At this point if we run the `gulp build` task we created above, it will run the `js` task and then generate `/js/app.min.js` file so we can include it in a simple `HTML` file.
+At this point we can run the `gulp build` task we created above, it will run the `js` task and then generate `/js/app.min.js` file so we can include it in a simple `HTML` file.
 
 ``` html
 <!DOCTYPE HTML>
@@ -81,6 +91,7 @@ At this point if we run the `gulp build` task we created above, it will run the 
 </html>
 ```
 
+To open the project in a localhost environment run `gulp serve` and then this will automatically open a browser tab directed to [localhost:3000].
 
 ## Adding Translation Using Angular-translate
 
@@ -91,7 +102,6 @@ The first step is to add translation support for Application text, we will work 
 Let's setup Angular and configure it with `angular-translate`
 
 ``` javascript
-
 // js/app.js
 
 var app = angular.module('Multilingual', ['pascalprecht.translate']);
@@ -190,21 +200,26 @@ So for example if we missed up the translation for `HELLO` we will get a warning
 
 ### Load Translation Files Asynchronously
 
-Instead of adding translation data for different languages in the `.config()` method, there is another way to load them in an asynchronous and lazy loading.
+Instead of adding translation data for different languages directly in the `.config()` method, there is another way to load them in an asynchronous and lazy loading.
 
-There are multiple ways to do this, one of them is to use the `angular-translate-loader-static-files` extension, first we need to install the extension with bower:
+There are [multiple ways](https://angular-translate.github.io/docs/#/guide/12_asynchronous-loading) to do this. In this tutorial we will use the `angular-translate-loader-static-files` extension.
+
+First we need to install the extension with bower:
 
 ```
 bower install angular-translate-loader-static-files --save
 ```
 
-Once installed we need to update the gulp task with the extension file path.
+Once installed we need to update the Gulp task with the extension file path then run `gulp build`.
 
 ``` javascript
 gulp.task('js', function(){
   return gulp.src([
     './bower_components/angular/angular.js',
     './bower_components/angular-translate/angular-translate.js',
+    './bower_components/angular-translate-handler-log/angular-translate-handler-log.js',
+
+    // New file
     'bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
 
     './js/app.js'])
@@ -214,14 +229,7 @@ gulp.task('js', function(){
 });
 ```
 
-Now we can use `useStaticFilesLoader` method to tell `angular-translate` which language files to load using a specific pattern:
-
-```
-prefix - specifies file prefix
-suffix - specifies file suffix
-```
-
-In our translations directory we added two files in this way
+We need to create a `/translations` directory and add the languages translation files.
 
 ```
 translations
@@ -229,31 +237,51 @@ translations
 └── en.json
 ```
 
+`ar.json`
+
 ``` json
-
-//en.json
-
 {
-  "HELLO": "Hello",
-  "button_lang_ar": "Arabic",
-  "button_lang_en": "English"
+  "HELLO": "مرحبا",
+  "button_lang_ar": "العربية",
+  "button_lang_en": "الإنجليزية",
+  "welcome_message": "مرحباً في موقع Angularjs المتعدد اللغات"
 }
 ```
 
-``` javascript
-app.config(['$translateProvider', function($translateProvider){
+`en.json`
 
-  $translateProvider.useStaticFilesLoader({
+``` json
+{
+  "HELLO": "Hello",
+  "button_lang_ar": "Arabic",
+  "button_lang_en": "English",
+  "welcome_message": "Welcome to the Angularjs multilingual site"
+}
+```
+
+Now we can use `useStaticFilesLoader` method to tell `angular-translate` which language files to load using a specific pattern:
+
+```
+prefix - specifies file prefix
+suffix - specifies file suffix
+```
+
+``` javascript
+// js/app.js
+
+app.config(['$translateProvider', function($translateProvider) {
+
+  $translateProvider
+  .useStaticFilesLoader({
     prefix: '/translations/',
     suffix: '.json'
   })
   .preferredLanguage('ar')
-  .useMissingTranslationHandlerLog();
-
+  .useMissingTranslationHandlerLog()
 }]);
 ```
 
-If we want to add a prefix to files we can do something like this
+If we want to add a prefix to the files we can rename the each one using a prefix in this case `locale-`.
 
 ```
 translations
@@ -262,35 +290,39 @@ translations
 ```
 
 ``` javascript
-app.config(['$translateProvider', function($translateProvider){
+// js/app.js
 
-  $translateProvider.useStaticFilesLoader({
+app.config(['$translateProvider', function($translateProvider) {
+
+  $translateProvider
+  .useStaticFilesLoader({
     prefix: '/translations/locale-',
     suffix: '.json'
   })
   .preferredLanguage('ar')
-  .useMissingTranslationHandlerLog();
-
+  .useMissingTranslationHandlerLog()
 }]);
 ```
 
-And angular translate will concatenate our code to `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/en.json` or `/translations/locale-en.json` file in the second case.
+In this case `angular-translate` will concatenate our code as `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/locale-en.json` file for example.
 
 
 ### Switching Between Different Languages
 
-Till now we have worked only with label translations, how can we switch between two languages at runtime. We will need to add a way to switch to the other language by adding a button for every language.
+Till now we have worked only with text translations for two languages, but still we can't switch to the other language from the browser at runtime. To do this we need to add a button for every language to switch from it.
 
 ``` html
 <div ng-controller="LanguageSwitchController">
-  <button ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button"></button>
-  <button ng-click="changeLanguage('en')" translate="button_lang_en" class="button"></button>
+  <button ng-show="lang == 'en'" ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button button-small"></button>
+  <button ng-show="lang == 'ar'" ng-click="changeLanguage('en')" translate="button_lang_en" class="button button-small"></button>
 </div>
 ```
 
 At this point we can also create some `$rootScope` properties so we can use them on HTMl to setup initial layout direction and `lang` attribute in the first load and bind them later whenever the language change.
 
 ``` javascript
+// js/app.js
+
 app.run(['$rootScope', function($rootScope) {
   $rootScope.lang = 'en';
 
@@ -302,19 +334,11 @@ app.run(['$rootScope', function($rootScope) {
 }])
 ```
 
-``` html
-<html lang="{{ lang }}" ng-app="Multilingual">
-```
-
-Used in HTML as [helper classes](http://www.sitepoint.com/using-helper-classes-dry-scale-css/)
-
-``` html
-<div class="text-{{ default_float }}"></div>
-```
-
-`anular-translate` provides a handy method `use` that takes a parameter and sets the language for us based on the passed parameter. Also listen to the `$translateChangeSuccess` event that gets fired once the a translation change was successful to make sure the language has changed and then we can modify the `$rootScope` properties.
+`anular-translate` provides a handy method `use` that takes a parameter and sets the language for us based on the passed parameter. Also we will listen to the `$translateChangeSuccess` event that gets fired once the a translation change was successful to make sure the language has changed and then we can modify the `$rootScope` properties based on the selected language.
 
 ``` javascript
+// js/app.js
+
 app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate',
   function($scope, $rootScope, $translate) {
     $scope.changeLanguage = function(langKey) {
@@ -333,6 +357,16 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
       $rootScope.opposite_float = language === 'ar' ? 'left' : 'right';
     });
 }]);
+```
+
+``` html
+<html lang="{{ lang }}" ng-app="Multilingual">
+```
+
+Another example of using theses directional properties in HTML as [helper classes](http://www.sitepoint.com/using-helper-classes-dry-scale-css/)
+
+``` html
+<div class="text-{{ default_float }}"></div>
 ```
 
 
@@ -515,3 +549,4 @@ I’ve created a Github repo for this article. You can check out the code at [mu
 [translate-directive]:https://angular-translate.github.io/docs/#/guide/05_using-translate-directive
 [manage-rtl-css-sass-grunt]:http://www.sitepoint.com/manage-rtl-css-sass-grunt/
 [multilingualwithangular]:https://github.com/ahmadajmi/multilingualwithangular
+[localhost:3000]:http://localhost:3000
