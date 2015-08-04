@@ -69,9 +69,9 @@ At this point if we run the `gulp build` task we created above, it will run the 
 
 ``` html
 <!DOCTYPE HTML>
-<html lang="en">
+<html>
 <head>
-  <title>Multilingual</title>
+  <title>Multilingual Support for Angularjs</title>
   <meta charset="utf-8">
 </head>
 
@@ -86,7 +86,7 @@ At this point if we run the `gulp build` task we created above, it will run the 
 
 The first step is to add translation support for Application text, we will work with Arabic and English as our main languages, the two languages are different in the way of writing and the writing direction, Arabic (RTL) English (LTR).
 
-[angular-translate] is an [AngularJS] module that makes it very easy to translate the text, it provides many features like filters and directives, asynchronous loading of i18n data and more.
+[angular-translate] is an [AngularJS] module that we can use to translate the text, it provides many features like filters, directives and asynchronous loading of i18n data.
 
 Let's setup Angular and configure it with `angular-translate`
 
@@ -99,11 +99,11 @@ var app = angular.module('Multilingual', ['pascalprecht.translate']);
 app.config(['$translateProvider', function($translateProvider) {
 
   $translateProvider
-  .translations('en', {
-    'HELLO': 'Hello'
-  })
   .translations('ar', {
     'HELLO': 'مرحبا'
+  })
+  .translations('en', {
+    'HELLO': 'Hello'
   })
   .preferredLanguage('ar');
 
@@ -114,12 +114,14 @@ app.config(['$translateProvider', function($translateProvider) {
 <html ng-app="Multilingual">
 ```
 
+Then run `gulp build` task from the command line to build the new changes in the JavaScript file.
+
 What we did:
 
 * Create an Angular module called `Multilingual`
 * Inject `angular-translate` module as a dependency into your App as `pascalprecht.translate`
 * Inject `$translateProvider` in the `.config()` method
-* Register the translation tables in different languages using the `.translations()` method setting the language key such as `en` or `ar` as the first parameter.
+* Register the translation tables in different languages using the `.translations()` method and setting the language key such as `en` or `ar` as the first parameter.
 * Set the preferred language using `.preferredLanguage()` method, this is important as we use more than one language so we can teach `angular-translate` which one to use on first load.
 
 Let's see an example of `angular-translate` using the `translate` filter
@@ -128,7 +130,7 @@ Let's see an example of `angular-translate` using the `translate` filter
 <h2>{{ 'HELLO' | translate }}</h2>
 ```
 
-A better way is to use the `translate` directive, using the directive is better than using the filter as described in [translate-directive] documentation.
+Having too many filters in a view sets up too many watch expressions as described in [translate-directive] documentation. So a better and faster way is to use the `translate` directive. Also the visibility of `{{}}` brackets, they might appear to the user in the first load.
 
 ``` html
 <h2 translate>HELLO</h2>
@@ -140,12 +142,51 @@ Another way of using the directive is to pass the translation ID as attribute va
 <h2 translate="HELLO"></h2>
 ```
 
-Sometimes we need to know if we have missed some translation ID, `angular-translate` provides a very good method which is `useMissingTranslationHandlerLog()` which logs warnings into console for any missing translation ID. Using this method directly on `$translateProvider` as:
+Sometimes we need to know if we have missed some translation ID, `angular-translate` provides a very good method `useMissingTranslationHandlerLog()` which logs warnings into console for any missing translation ID.
 
-``` javascript
-$translateProvider.useMissingTranslationHandlerLog();
+Install the package with Bower
+
+```
+bower install angular-translate-handler-log --save
 ```
 
+Update the JavaScript Gulp task
+
+``` javascript
+gulp.task('js', function(){
+  return gulp.src([
+    './bower_components/angular/angular.js',
+    './bower_components/angular-translate/angular-translate.js',
+
+    // New file
+    './bower_components/angular-translate-handler-log/angular-translate-handler-log.js',
+
+    './js/app.js'])
+    .pipe(concat('app.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./js'))
+});
+```
+
+Run `gulp build`
+
+Using this method directly on `$translateProvider` as:
+
+``` javascript
+  $translateProvider
+  .translations('en', {
+    'HELLO': 'Hello'
+  })
+  .translations('ar', {
+    'HELLO': 'مرحبا'
+  })
+  .preferredLanguage('ar')
+  .useMissingTranslationHandlerLog();
+```
+
+So for example if we missed up the translation for `HELLO` we will get a warning message that says:
+
+`Translation for HELLO doesn't exist`
 
 ### Load Translation Files Asynchronously
 

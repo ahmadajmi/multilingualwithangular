@@ -34,6 +34,7 @@ gulp.task('js', function() {
   return gulp.src([
     './bower_components/angular/angular.js',
     './bower_components/angular-translate/angular-translate.js',
+    './bower_components/angular-translate-handler-log/angular-translate-handler-log.js',
     './bower_components/angular-cookies/angular-cookies.js',
     './bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js',
     './bower_components/angular-translate-storage-local/angular-translate-storage-local.js',
@@ -42,7 +43,7 @@ gulp.task('js', function() {
     './js/app.js'])
     .pipe(concat('app.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('./js'))
+    .pipe(gulp.dest('./js'));
 });
 
 
