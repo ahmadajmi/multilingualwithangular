@@ -35,9 +35,11 @@ gulp.task('js', function() {
     './bower_components/angular/angular.js',
     './bower_components/angular-translate/angular-translate.js',
     './bower_components/angular-translate-handler-log/angular-translate-handler-log.js',
+
     './bower_components/angular-cookies/angular-cookies.js',
     './bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js',
     './bower_components/angular-translate-storage-local/angular-translate-storage-local.js',
+
     './bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
 
     './js/app.js'])

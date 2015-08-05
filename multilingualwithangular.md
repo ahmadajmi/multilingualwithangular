@@ -369,10 +369,9 @@ Another example of using theses directional properties in HTML as [helper classe
 <div class="text-{{ default_float }}"></div>
 ```
 
-
 ### Remember the Language after Page Refresh
 
-What if the user did a page refresh, the current scenario is to show the language we defined using `preferredLanguage`, but if the user selected another language then he closed the App or did a page refresh, we need the user to continue use his selected language where he left off. We can fix this by using the browser localStorage to store the selected language and then use it so our App can remember which language the user have chosen the last time.
+After we have built the switching language feature and users loved it so much and so yes they can't believe they are able to change the language to use their preferred one, after that they closed the App and come back or they did a page refresh, what will happen in this case is they will see the App in the initial language we set using `preferredLanguage` and this is not good for the user experience and user time, so what we need to do is to let the user continue use the App with his selected language where he left off. We can fix this by using the browser localStorage to store the user selected language and then use it later so our App can remember which language the user have chosen the last time.
 
 We will use [angular-translate-storage-local] extension for that, first install the package with bower:
 
@@ -380,17 +379,20 @@ We will use [angular-translate-storage-local] extension for that, first install 
 bower install angular-translate-storage-local --save
 ```
 
-This will also install `angular-cookies` and `angular-translate-storage-cookie`as a dependencies, once installed we need to update the gulp task with the new files.
+This will also install `angular-cookies` and `angular-translate-storage-cookie`as dependencies, once installed we need to update the Gulp task with the new files then run `gulp build`.
 
 ``` javascript
 gulp.task('js', function(){
   return gulp.src([
     './bower_components/angular/angular.js',
     './bower_components/angular-translate/angular-translate.js',
-    './bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
-    './bower_components/angular-cookies/angular-cookies.min.js',
-    './bower_components/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js',
-    './bower_components/bower_components/angular-translate-storage-local/angular-translate-storage-local.min.js',
+    './bower_components/angular-translate-handler-log/angular-translate-handler-log.js',
+    'bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+
+    // New files
+    './bower_components/angular-cookies/angular-cookies.js',
+    './bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js',
+    './bower_components/angular-translate-storage-local/angular-translate-storage-local.js',
 
     './js/app.js'])
     .pipe(concat('app.min.js'))
@@ -399,8 +401,10 @@ gulp.task('js', function(){
 });
 ```
 
+The next steps is to:
+
 * Add `ngCookies` as a dependency
-* Tell `$translateProvider` to use the localStorage via `useLocalStorage()`
+* Tell `$translateProvider` to use localStorage via `useLocalStorage()`
 
 ``` javascript
 var app = angular.module('Multilingual', [
@@ -409,23 +413,22 @@ var app = angular.module('Multilingual', [
   ]);
 
 app.config(['$translateProvider', function($translateProvider) {
-
   $translateProvider
   .useStaticFilesLoader({
     prefix: '/translations/',
     suffix: '.json'
   })
-  .preferredLanguage('en')
+  .preferredLanguage('ar')
   .useLocalStorage()
   .useMissingTranslationHandlerLog()
-
 }]);
 ```
 
-What `angular-translate` will do is to save a language key with a specific language ID, then it will retrieve it the next time the users opens the app.
+`angular-translate` will store the initial language as we set by `preferredLanguage()` with the key `NG_TRANSLATE_LANG_KEY` and assign the language as it's value in the browser localStorage and then update it any time the user switch the language, so every time the user open the App it will retrieve it from localStorage.
 
-`angular-translate` will store the initial language as we st it using `.preferredLanguage('en')` and then update it any time the user switches the language.
+![localstorage](https://cloud.githubusercontent.com/assets/626005/9083058/6a8488ee-3b68-11e5-988c-8a4713c5f6fe.png)
 
+### TODO
 ## Working with CSS and App Layout Direction (RTL & LTR)
 
 Comes to the presentation part, if you are working with two languages with the same writing directions (English & French), that would be great, but if one of the language direction is RTL and the other is LTR, we need do some extra work to adjust some layout scenarios.
