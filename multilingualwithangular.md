@@ -25,7 +25,7 @@ Next, install Gulp within the project:
 npm install gulp --save-dev
 ```
 
-We will need some gulp dependencies for JavaScript and SASS and other automation tools.
+We will need some gulp dependencies for JavaScript and Sass and other automation tools.
 
 ```
 npm install gulp-sass --save-dev
@@ -35,7 +35,7 @@ npm install run-sequence --save-dev
 npm install browser-sync --save-dev
 ```
 
-Create an empty `gulpfile.js` configuration file within the project directory which is used to define our gulp tasks such as JavaScript and SASS. You can view the complete file on [Github](https://github.com/ahmadajmi/multilingualwithangular/blob/master/gulpfile.js).
+Create an empty `gulpfile.js` configuration file within the project directory which is used to define our gulp tasks such as JavaScript and Sass. You can view the complete file on [Github](https://github.com/ahmadajmi/multilingualwithangular/blob/master/gulpfile.js).
 
 In JavaScript task we will add `angular` and `angular-translate` files plus the main JavaScript file inside a `/js` directory then concatenate them together and uglify to minify and produce a smaller file size.
 
@@ -174,7 +174,7 @@ gulp.task('js', function(){
     './js/app.js'])
     .pipe(concat('app.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('./js'))
+    .pipe(gulp.dest('./js'));
 });
 ```
 
@@ -225,7 +225,7 @@ gulp.task('js', function(){
     './js/app.js'])
     .pipe(concat('app.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('./js'))
+    .pipe(gulp.dest('./js'));
 });
 ```
 
@@ -277,7 +277,7 @@ app.config(['$translateProvider', function($translateProvider) {
     suffix: '.json'
   })
   .preferredLanguage('ar')
-  .useMissingTranslationHandlerLog()
+  .useMissingTranslationHandlerLog();
 }]);
 ```
 
@@ -397,7 +397,7 @@ gulp.task('js', function(){
     './js/app.js'])
     .pipe(concat('app.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('./js'))
+    .pipe(gulp.dest('./js'));
 });
 ```
 
@@ -428,10 +428,10 @@ app.config(['$translateProvider', function($translateProvider) {
 
 ![localstorage](https://cloud.githubusercontent.com/assets/626005/9083058/6a8488ee-3b68-11e5-988c-8a4713c5f6fe.png)
 
-### TODO
+
 ## Working with CSS and App Layout Direction (RTL & LTR)
 
-Comes to the presentation part, if you are working with two languages with the same writing directions (English & French), that would be great, but if one of the language direction is RTL and the other is LTR, we need do some extra work to adjust some layout scenarios.
+Now we reached the presentation part, if you are working with two languages with the same writing directions (English & French), that would be great, but if one of the language direction is RTL and the other is LTR, we need do some extra work to adjust some layout scenarios.
 
 Let's say this is the code for the LTR language (English)
 
@@ -445,7 +445,7 @@ When it comes to the RTL language, the above code should be mirrored to be `padd
 .media-image { padding-left: 1rem; }
 ```
 
-We may do something like this, but this is not a good practice and is time consuming in addition for code repetition and writhing code to override the original code.
+We may do something like this, but this is not a good practice and is time consuming in addition for more code repetition writhing code to override the original code.
 
 ```css
 [lang='ar'] .media-image {
@@ -454,22 +454,29 @@ We may do something like this, but this is not a good practice and is time consu
 }
 ```
 
-To solve this issue we need to write CSS that supports both RTL and LTR in an effective, automated and dynamic way so that we don’t have to repeat or override CSS. I wrote about [manage-rtl-css-sass-grunt] before and I encourage you to read it for more information about the issue and how to solve it.
+To solve this issue we need to write CSS that supports both RTL and LTR in an effective, automated and dynamic way so that we don’t have to repeat or override CSS. I wrote about this technique before in [manage-rtl-css-sass-grunt] and I encourage you to read it for more information about the issue and how to solve it.
 
-We will do the same thing here but this time using Gulp. Adding a sass task that takes `ltr-app.scss` and `rtl-app.scss` and inside them we will import the main sass file in addition to direction specific variables.
+We will implement this technique for this tutorial using Gulp. Adding a Sass task that takes `ltr-app.scss` and `rtl-app.scss` and inside them we will import the main Sass file in addition to direction specific variables.
 
 ``` javascript
 gulp.task('sass', function () {
-  return gulp.src(['./scss/ltr-app.scss', './scss/rtl-app.scss'])
+  return gulp.src(['./sass/ltr-app.scss', './sass/rtl-app.scss'])
   .pipe(sass())
   .pipe(gulp.dest('./css'));
 });
+
+// Update the build task with sass
+gulp.task('build', [], function() {
+  runSequence('js', 'sass');
+});
+
 ```
 
-`ltr-app.scss` file should be
+`sass/ltr-app.scss` file should be
 
 ``` sass
-// LTR language directions.
+// LTR language directions
+
 $default-float:          left;
 $opposite-float:        right;
 
@@ -479,10 +486,11 @@ $opposite-direction:      rtl;
 @import 'style';
 ```
 
-And `rtl-app.scss`
+And `sass/rtl-app.scss`
 
 ``` sass
-// RTL language directions.
+// RTL language directions
+
 $default-float:         right;
 $opposite-float:         left;
 
@@ -492,42 +500,42 @@ $opposite-direction:      ltr;
 @import 'style';
 ```
 
-And this is an example of what style.scss looks like.
+And this is an example of what `sass/style.scss`  looks like.
 
 ``` css
-body {
-  direction: $default-direction;
-}
+body { direction: $default-direction; }
 
 .column { float: $default-float; }
+
+.media-image { padding-#{$opposite-float}: 1rem; }
 ```
 
-After we run the sass gulp task we will get two files that are (without magnification)
+Now you can run `gulp build` and the Sass task we generate two files
 
 ``` css
-/* ltr-app.css */
-body {
-  direction: ltr;
-}
+/* css/rtl-app.css */
 
-.column { float: left; }
-```
-
-``` css
-/* rtl-app.css */
-body {
-  direction: rtl;
-}
+body { direction: rtl; }
 
 .column { float: right; }
+
+.media-image { padding-left: 1rem; }
 ```
 
-The next step is to uses these generated files dynamically based on the current language. We will use the `default_direction` we created above to set the direction in the first load and then bind it when we change the language.
+``` css
+/* css/ltr-app.css */
+body { direction: ltr; }
+
+.column { float: left; }
+
+.media-image { padding-right: 1rem; }
+```
+
+The next step is to uses these generated files dynamically based on the current language. We will use the `$rootScope` `default_direction` property to set the direction in the first load and then bind it when we change the language.
 
 ``` html
 <link href="css/{{ default_direction }}-app.css" rel="stylesheet">
 ```
-
 
 ## Conclusion
 
