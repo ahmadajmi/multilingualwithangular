@@ -1,14 +1,13 @@
-## Multilingual Support for Angularjs
+## Multilingual Support for AngularJS
 
-You are building a Single Page Application with Angularjs that requires a multilingual support with more than one language so the user can switch instantly between languages without refreshing the page, in that case we need to do more things to our App, this will include translating App text, switching instantly between different languages, change layout direction (RTL & LTR).
-
-In this tutorial we will go through theses steps and see how to add a multilingual support to any Angularjs App.
+In this tutorial I'll show you how to add a multilingual support to any AngularJS application.
+We'll build a single page application with AngularJS that requires a multilingual support with more than one language so the user can switch instantly between languages without refreshing the page. In that case we need to do more things to our App, including translating App text, switching instantly between different languages, or changing layout direction (RTL & LTR).
 
 ## Environment Setup
 
-In order to make our development environment more automated and flexible we will use [Bower] and [Gulp] to manage the project dependencies, if they are not installed on your system or you still didn't use them in your development workflow, I highly recommend to install and learn more about them.
+In order to make our development environment as more automated and flexible as possible, we'll use [Bower](http://bower.io/) and [Gulp](http://gulpjs.com/) to manage the project dependencies. If they are not installed on your system yet or you have not even used them in your development workflow, I highly recommend to install and start learning more about them.
 
-Let's setup Bower by running `bower init` in the command line inside a project directory, let's call it `multilingualwithangular`. [bower init] will interactively create a manifest file called [bower.json] which will include some information about the project as well as a list of installed front-end dependencies.
+As first task, let's setup Bower by running `bower init` in the command line inside a project directory that we'll call `multilingualwithangular`. `bower init` will interactively create a manifest file called `bower.json` which will include some information about the project as well as a list of the previously installed front-end dependencies.
 
 The next step is to install the initial required packages.
 
@@ -17,15 +16,16 @@ bower install angular --save
 bower install angular-translate --save
 ```
 
-Let's setup Gulp and install the basic packages, first we need to run  `npm init` command line and follow a simple steps to create [package.json] file which will include some information about the project and managing Node.js modules.
+Let's setup Gulp and install the basic packages.
+First we need to run  `npm init` command line and follow few simple steps to create a `package.json` file which will include some information about the project and how to manage Node.js modules.
 
-Next, install Gulp within the project:
+As next step, we'll install Gulp within the project:
 
 ```
 npm install gulp --save-dev
 ```
 
-We will need some gulp dependencies for JavaScript and Sass and other automation tools.
+We'll also need some Gulp dependencies for JavaScript and Sass and other automation tools.
 
 ```
 npm install gulp-sass --save-dev
@@ -35,9 +35,10 @@ npm install run-sequence --save-dev
 npm install browser-sync --save-dev
 ```
 
-Create an empty `gulpfile.js` configuration file within the project directory which is used to define our gulp tasks such as JavaScript and Sass. You can view the complete file on [Github](https://github.com/ahmadajmi/multilingualwithangular/blob/master/gulpfile.js).
+At this point, we have to create an empty `gulpfile.js` configuration file within the project directory, which will be used to define our Gulp tasks such as JavaScript and Sass.
+[You can view the complete file on my Github repository](https://github.com/ahmadajmi/multilingualwithangular/blob/master/gulpfile.js).
 
-In JavaScript task we will add `angular` and `angular-translate` files plus the main JavaScript file inside a `/js` directory then concatenate them together and uglify to minify and produce a smaller file size.
+In the JavaScript task we'll add two files, `angular` and `angular-translate`, plus the main JavaScript file inside a `/js` directory. Then, we'll concatenate them together and use a library for NodeJS called [Uglify](https://github.com/mishoo/UglifyJS) to compress and reduce the size of our file.
 
 ``` javascript
 'use strict';
@@ -75,7 +76,7 @@ gulp.task('build', [], function() {
 gulp.task('default', ['build'], function() {});
 ```
 
-At this point we can run the `gulp build` task we created above, it will run the `js` task and then generate `/js/app.min.js` file so we can include it in a simple `HTML` file.
+Done this, we can run the `gulp build` task we've previously created. It'll run the `js` task and then generate `/js/app.min.js` file that will be included in a simple `HTML` file.
 
 ``` html
 <!DOCTYPE HTML>
@@ -91,15 +92,15 @@ At this point we can run the `gulp build` task we created above, it will run the
 </html>
 ```
 
-To open the project in a localhost environment run `gulp serve` and then this will automatically open a browser tab directed to [localhost:3000].
+To open the project in a localhost environment, run `gulp serve` and then this will automatically open a browser tab directed to [localhost:3000].
 
 ## Adding Translation Using Angular-translate
 
-The first step is to add translation support for Application text, we will work with Arabic and English as our main languages, the two languages are different in the way of writing and the writing direction, Arabic (RTL) English (LTR).
+These first configuration tasks completed, it's time to take a step forward and add translation support for the application text. We'll work with Arabic and English as our main languages, two languages which are different in the way of writing and writing directions (Right-to-Left Arabic and Left-to-Right English).
 
-[angular-translate] is an [AngularJS] module that we can use to translate the text, it provides many features like filters, directives and asynchronous loading of i18n data.
+[angular-translate](https://angular-translate.github.io/) is an [AngularJS](https://angularjs.org/) module that we can use to translate the text since it provides many interesting features like filters, directives and asynchronous loading of i18n data.
 
-Let's setup Angular and configure it with `angular-translate`
+First, let's setup AngularJS and configure it with `angular-translate`
 
 ``` javascript
 // js/app.js
@@ -126,13 +127,14 @@ app.config(['$translateProvider', function($translateProvider) {
 
 Then run `gulp build` task from the command line to build the new changes in the JavaScript file.
 
-What we did:
+Here is the explanation of what we've done in the previous code snippet:
+We have:
 
-* Create an Angular module called `Multilingual`
-* Inject `angular-translate` module as a dependency into your App as `pascalprecht.translate`
-* Inject `$translateProvider` in the `.config()` method
-* Register the translation tables in different languages using the `.translations()` method and setting the language key such as `en` or `ar` as the first parameter.
-* Set the preferred language using `.preferredLanguage()` method, this is important as we use more than one language so we can teach `angular-translate` which one to use on first load.
+* Created an Angular module called `Multilingual`.
+* Injected the `angular-translate` module as a dependency into our App as `pascalprecht.translate`.
+* Injected `$translateProvider` in the `.config()` method.
+* Registered the translation tables in different languages using the `.translations()` method and setting the language key such as `en` or `ar` as the first parameter.
+* Set the preferred language using `.preferredLanguage()` method, (this is important as we use more than one language, so we can teach `angular-translate` which one to use on first load).
 
 Let's see an example of `angular-translate` using the `translate` filter
 
@@ -140,7 +142,7 @@ Let's see an example of `angular-translate` using the `translate` filter
 <h2>{{ 'HELLO' | translate }}</h2>
 ```
 
-Having too many filters in a view sets up too many watch expressions as described in [translate-directive] documentation. So a better and faster way is to use the `translate` directive. Also the visibility of `{{}}` brackets, they might appear to the user in the first load.
+Having too many filters in a view sets up too many watch expressions as described in the [translate-directive](https://angular-translate.github.io/docs/#/guide/05_using-translate-directive) documentation. So, a better and faster way to implement is using the `translate` directive. **Also the visibility of `{{}}` brackets, they might appear to the user in the first load.**
 
 ``` html
 <h2 translate>HELLO</h2>
@@ -152,15 +154,15 @@ Another way of using the directive is to pass the translation ID as attribute va
 <h2 translate="HELLO"></h2>
 ```
 
-Sometimes we need to know if we have missed some translation ID, `angular-translate` provides a very good method `useMissingTranslationHandlerLog()` which logs warnings into console for any missing translation ID.
+Sometimes we may need to know if we have missed some translation ID. Well, `angular-translate` helps us solving this problem providing a very good method called `useMissingTranslationHandlerLog()` which logs warnings into the console for any missing translation ID.
 
-Install the package with Bower
+First of all, you need to install the package with Bower;
 
 ```
 bower install angular-translate-handler-log --save
 ```
 
-Update the JavaScript Gulp task
+then, update the JavaScript Gulp task.
 
 ``` javascript
 gulp.task('js', function(){
@@ -180,7 +182,7 @@ gulp.task('js', function(){
 
 Run `gulp build`
 
-Using this method directly on `$translateProvider` as:
+using this method directly on `$translateProvider` as:
 
 ``` javascript
   $translateProvider
@@ -194,23 +196,21 @@ Using this method directly on `$translateProvider` as:
   .useMissingTranslationHandlerLog();
 ```
 
-So for example if we missed up the translation for `HELLO` we will get a warning message that says:
+For example, if we missed up the translation for `HELLO`, thanks to this method we'll get a warning message that says:
 
 `Translation for HELLO doesn't exist`
 
 ### Load Translation Files Asynchronously
 
-Instead of adding translation data for different languages directly in the `.config()` method, there is another way to load them in an asynchronous and lazy loading.
+Instead of adding translation data for different languages directly in the `.config()` method, there is another way to load them in an asynchronous and lazy loading. Actually, there are [several ways](https://angular-translate.github.io/docs/#/guide/12_asynchronous-loading) to achieve this task, but in this tutorial we'll use the `angular-translate-loader-static-files` extension.
 
-There are [multiple ways](https://angular-translate.github.io/docs/#/guide/12_asynchronous-loading) to do this. In this tutorial we will use the `angular-translate-loader-static-files` extension.
-
-First we need to install the extension with bower:
+First we need to install the extension with Bower:
 
 ```
 bower install angular-translate-loader-static-files --save
 ```
 
-Once installed we need to update the Gulp task with the extension file path then run `gulp build`.
+Once installed, we need to update the Gulp task with the extension file path and then run `gulp build`.
 
 ``` javascript
 gulp.task('js', function(){
@@ -259,7 +259,7 @@ translations
 }
 ```
 
-Now we can use `useStaticFilesLoader` method to tell `angular-translate` which language files to load using a specific pattern:
+At this point we can use `useStaticFilesLoader` method to tell `angular-translate` which language files to load using a specific pattern:
 
 ```
 prefix - specifies file prefix
@@ -281,7 +281,7 @@ app.config(['$translateProvider', function($translateProvider) {
 }]);
 ```
 
-If we want to add a prefix to the files we can rename the each one using a prefix in this case `locale-`.
+If we want to add a prefix to the files we can rename each of them using a prefix (in this case, `locale-`).
 
 ```
 translations
@@ -304,12 +304,12 @@ app.config(['$translateProvider', function($translateProvider) {
 }]);
 ```
 
-In this case `angular-translate` will concatenate our code as `{{prefix}}{{langKey}}{{suffix}}` then load `/translations/locale-en.json` file for example.
+Here `angular-translate` will concatenate our code as `{{prefix}}{{langKey}}{{suffix}}`, and then load `/translations/locale-en.json` file for example.
 
 
 ### Switching Between Different Languages
 
-Till now we have worked only with text translations for two languages, but still we can't switch to the other language from the browser at runtime. To do this we need to add a button for every language to switch from it.
+So far we've seen how to work with text translations for two languages. Nevertheless, we can't still switch to the other language from the browser at runtime. To do this, we need to add a button for every language to switch from it.
 
 ``` html
 <div ng-controller="LanguageSwitchController">
@@ -318,7 +318,7 @@ Till now we have worked only with text translations for two languages, but still
 </div>
 ```
 
-At this point we can also create some `$rootScope` properties so we can use them on HTMl to setup initial layout direction and `lang` attribute in the first load and bind them later whenever the language change.
+Now we can also create some `$rootScope` properties and use them on our HTML code to setup the initial layout direction and the `lang` attribute in the first load, binding them later whenever the language change.
 
 ``` javascript
 // js/app.js
@@ -334,7 +334,7 @@ app.run(['$rootScope', function($rootScope) {
 }])
 ```
 
-`anular-translate` provides a handy method `use` that takes a parameter and sets the language for us based on the passed parameter. Also we will listen to the `$translateChangeSuccess` event that gets fired once the a translation change was successful to make sure the language has changed and then we can modify the `$rootScope` properties based on the selected language.
+`anular-translate` provides a handy method called `use` that takes a parameter and sets the language for us based on the passed parameter. Moreover, we'll listen to the `$translateChangeSuccess` event that gets fired once a translation change is successful, in order to make sure the language has changed. Then, we can modify the `$rootScope` properties based on the selected language.
 
 ``` javascript
 // js/app.js
@@ -363,7 +363,7 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
 <html lang="{{ lang }}" ng-app="Multilingual">
 ```
 
-Another example of using theses directional properties in HTML as [helper classes](http://www.sitepoint.com/using-helper-classes-dry-scale-css/)
+In my article titled [Using Helper Classes to DRY and Scale CSS](http://www.sitepoint.com/using-helper-classes-dry-scale-css/), you can see another example of using theses directional properties in HTML as helper classes.
 
 ``` html
 <div class="text-{{ default_float }}"></div>
@@ -371,15 +371,17 @@ Another example of using theses directional properties in HTML as [helper classe
 
 ### Remember the Language after Page Refresh
 
-After we have built the switching language feature and users loved it so much and so yes they can't believe they are able to change the language to use their preferred one, after that they closed the App and come back or they did a page refresh, what will happen in this case is they will see the App in the initial language we set using `preferredLanguage` and this is not good for the user experience and user time, so what we need to do is to let the user continue use the App with his selected language where he left off. We can fix this by using the browser localStorage to store the user selected language and then use it later so our App can remember which language the user have chosen the last time.
+Well, we've built the switching language feature and we're able to change the language and use our favorite one. **after that they closed the App and come back or they did a page refresh, what will happen in this case is they will see the App in the initial language we set using `preferredLanguage` and this is not good for the user experience and user time, so what we need to do is to let the user continue use the App with his selected language where he left off.** We can solve this problem by using the browser localStorage to store the user selected language and then use it later. In this way our application will remember which language has been chosen by the user the last time he used the app.
 
-We will use [angular-translate-storage-local] extension for that, first install the package with bower:
+We'll use [angular-translate-storage-local](https://github.com/angular-translate/bower-angular-translate-storage-local) extension for this purpose.
+First install the package with Bower:
 
 ```
 bower install angular-translate-storage-local --save
 ```
 
-This will also install `angular-cookies` and `angular-translate-storage-cookie`as dependencies, once installed we need to update the Gulp task with the new files then run `gulp build`.
+Running this command, we'll also install `angular-cookies` and `angular-translate-storage-cookie`as dependencies.
+Once installed, we need to update the Gulp task with the new files running `gulp build`.
 
 ``` javascript
 gulp.task('js', function(){
@@ -401,10 +403,12 @@ gulp.task('js', function(){
 });
 ```
 
-The next steps is to:
+At this point, the next steps are:
 
-* Add `ngCookies` as a dependency
-* Tell `$translateProvider` to use localStorage via `useLocalStorage()`
+* Adding `ngCookies` as a dependency.
+* Telling `$translateProvider` to use localStorage via `useLocalStorage()`
+
+Here is how we need to proceed:
 
 ``` javascript
 var app = angular.module('Multilingual', [
@@ -424,14 +428,15 @@ app.config(['$translateProvider', function($translateProvider) {
 }]);
 ```
 
-`angular-translate` will store the initial language as we set by `preferredLanguage()` with the key `NG_TRANSLATE_LANG_KEY` and assign the language as it's value in the browser localStorage and then update it any time the user switch the language, so every time the user open the App it will retrieve it from localStorage.
+`angular-translate` will store the initial language as we set by `preferredLanguage()` with the key `NG_TRANSLATE_LANG_KEY` . It will assign the language as its value in the browser localStorage and then update it any time the user switches the language. Every time the user opens the app, he'll retrieve **it** from localStorage.
 
 ![localstorage](https://cloud.githubusercontent.com/assets/626005/9083058/6a8488ee-3b68-11e5-988c-8a4713c5f6fe.png)
 
 
 ## Working with CSS and App Layout Direction (RTL & LTR)
 
-Now we reached the presentation part, if you are working with two languages with the same writing directions (English & French), that would be great, but if one of the language direction is RTL and the other is LTR, we need do some extra work to adjust some layout scenarios.
+We have reached the presentation part.
+If you're working with two languages with the same writing directions (for instance, English and French), that would be great. Nevertheless, if one of the language direction is RTL and the other is LTR, we need do some extra work to adjust some layout scenarios.
 
 Let's say this is the code for the LTR language (English)
 
@@ -445,7 +450,7 @@ When it comes to the RTL language, the above code should be mirrored to be `padd
 .media-image { padding-left: 1rem; }
 ```
 
-We may do something like this, but this is not a good practice and is time consuming in addition for more code repetition writhing code to override the original code.
+**We may do something like this, but this is not a good practice and is time consuming in addition for more code repetition writhing code to override the original code.**
 
 ```css
 [lang='ar'] .media-image {
@@ -454,9 +459,9 @@ We may do something like this, but this is not a good practice and is time consu
 }
 ```
 
-To solve this issue we need to write CSS that supports both RTL and LTR in an effective, automated and dynamic way so that we don’t have to repeat or override CSS. I wrote about this technique before in [manage-rtl-css-sass-grunt] and I encourage you to read it for more information about the issue and how to solve it.
+To solve this issue we need to write CSS that supports both RTL and LTR in an effective, automated and dynamic way, so that we don’t have to repeat or override CSS. I encourage you to read my article titled [Manage RTL CSS with Sass and Grunt](http://www.sitepoint.com/manage-rtl-css-sass-grunt/) to learn more about this technique and how to use it in your projects.
 
-We will implement this technique for this tutorial using Gulp. Adding a Sass task that takes `ltr-app.scss` and `rtl-app.scss` and inside them we will import the main Sass file in addition to direction specific variables.
+We'll implement it in this tutorial using Gulp and adding a Sass task that takes `ltr-app.scss` and `rtl-app.scss`. We'll import the main Sass file in addition to direction specific variables inside them.
 
 ``` javascript
 gulp.task('sass', function () {
@@ -510,7 +515,7 @@ body { direction: $default-direction; }
 .media-image { padding-#{$opposite-float}: 1rem; }
 ```
 
-Now you can run `gulp build` and the Sass task we generate two files
+Now you can run `gulp build` and **the Sass task we generate** two files
 
 ``` css
 /* css/rtl-app.css */
@@ -531,33 +536,14 @@ body { direction: ltr; }
 .media-image { padding-right: 1rem; }
 ```
 
-The next step is to uses these generated files dynamically based on the current language. We will use the `$rootScope` `default_direction` property to set the direction in the first load and then bind it when we change the language.
+The next step is to use these generated files dynamically, based on the current language. We'll use the `$rootScope` `default_direction` property to set the direction in the first load and then bind it when we change the language.
 
 ``` html
 <link href="css/{{ default_direction }}-app.css" rel="stylesheet">
 ```
 
-## Conclusion
+## Conclusions
 
-As we saw using [angular-translate] is the way to go when it comes to Angularjs translation, it offers a lot of handy filters, directives and other tools to use and we have covered the translation process in many different ways like switching between languages, store selected language in user browser storage and then working with CSS to make the presentation layer more responsive with language directions.
+As we saw using [angular-translate] is the way to go when it comes to AngularJS translation, it offers a lot of handy filters, directives and other tools to use and we have covered the translation process in many different ways like switching between languages, store selected language in user browser storage and then working with CSS to make the presentation layer more responsive with language directions.
 
-I’ve created a Github repo for this article. You can check out the code at [multilingualwithangular].
-
-
-[Gulp]:http://gulpjs.com/
-[Bower]:http://bower.io/
-[bower init]:http://bower.io/docs/creating-packages/
-[bower.json]:https://github.com/ahmadajmi/multilingualwithangular/blob/master/bower.json
-[package.json]:https://github.com/ahmadajmi/multilingualwithangular/blob/master/package.json
-[install-gulp]:https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md
-[npm]:https://www.npmjs.com/
-[angular-translate]:https://angular-translate.github.io/
-[HAML]:http://haml.info/
-[SASS]:http://sass-lang.com/
-[angular-translate-storage-local]:https://github.com/angular-translate/bower-angular-translate-storage-local
-[AngularJS]:https://angularjs.org/
-[asynchronous-loading]:http://angular-translate.github.io/docs/#/guide/12_asynchronous-loading
-[translate-directive]:https://angular-translate.github.io/docs/#/guide/05_using-translate-directive
-[manage-rtl-css-sass-grunt]:http://www.sitepoint.com/manage-rtl-css-sass-grunt/
-[multilingualwithangular]:https://github.com/ahmadajmi/multilingualwithangular
-[localhost:3000]:http://localhost:3000
+I’ve created a Github repo for this article. [You can check out the code here](https://github.com/ahmadajmi/multilingualwithangular).
