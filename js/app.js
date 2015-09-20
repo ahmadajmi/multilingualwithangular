@@ -30,7 +30,7 @@ app.config(['$translateProvider', function($translateProvider) {
 }]);
 
 app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate',
-  function($scope, $rootScope, $translate, $timeout) {
+  function($scope, $rootScope, $translate) {
 
     $scope.changeLanguage = function(langKey) {
       $translate.use(langKey);
