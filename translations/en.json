@@ -1,6 +1,7 @@
 {
+  "TITLE": "Multilingual AngularJS",
   "HELLO": "Hello",
-  "button_lang_ar": "Arabic",
-  "button_lang_en": "English",
-  "welcome_message": "Welcome to the Angularjs multilingual site"
+  "BUTTON_LANG_AR": "Arabic",
+  "BUTTON_LANG_EN": "English",
+  "WELCOME_MESSAGE": "Welcome to the AngularJS multilingual site"
 }

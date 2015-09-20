@@ -1,28 +1,24 @@
 <!DOCTYPE HTML>
 <html lang="{{ lang }}" ng-app="Multilingual">
 <head>
-  <title>Multilingual</title>
+  <title translate="TITLE"></title>
   <meta charset="utf-8">
-  <link href="css/{{ default_direction }}-app.css" rel="stylesheet">
+  <link ng-href="css/{{ default_direction }}-app.css" rel="stylesheet">
 </head>
 
 <body>
-
-  <div ng-hide="isLangChanged" class="spinner-wrapper">
-    <div class="loading-spinner"></div>
-  </div>
 
   <div class="row">
 
     <main class="column">
       <h2 translate="HELLO"></h2>
-      <p translate="welcome_message"></p>
+      <p translate="WELCOME_MESSAGE"></p>
     </main>
 
     <aside class="column">
       <div ng-controller="LanguageSwitchController">
-        <button ng-show="lang == 'en'" ng-click="changeLanguage('ar')" translate="button_lang_ar" class="button button-small"></button>
-        <button ng-show="lang == 'ar'" ng-click="changeLanguage('en')" translate="button_lang_en" class="button button-small"></button>
+        <button ng-show="lang == 'en'" ng-click="changeLanguage('ar')" translate="BUTTON_LANG_AR"></button>
+        <button ng-show="lang == 'ar'" ng-click="changeLanguage('en')" translate="BUTTON_LANG_EN"></button>
       </div>
     </aside>
 

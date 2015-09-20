@@ -4,15 +4,11 @@ Article: [Multilingual support for Angularjs]
 
 #### Demo Installation
 
-Make sure you have [Node.js] and [bower] installed then the following commands to
-
-Install Node.js packages
+Make sure you have [Node.js] and [bower] installed then run the the following commands to install npm and bower dependencies.
 
 ```
 npm install
 ```
-
-Install Bower packages
 
 ```
 bower install
