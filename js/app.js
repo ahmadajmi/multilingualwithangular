@@ -7,6 +7,7 @@ var app = angular.module('Multilingual', [
 
 app.run(['$rootScope', function($rootScope) {
   $rootScope.lang = 'en';
+  $rootScope.loading = false;
 
   $rootScope.default_float = 'left';
   $rootScope.opposite_float = 'right';
@@ -33,10 +34,13 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
   function($scope, $rootScope, $translate) {
 
     $scope.changeLanguage = function(langKey) {
+      $rootScope.loading = false;
       $translate.use(langKey);
     };
 
     $rootScope.$on('$translateChangeSuccess', function(event, data) {
+
+      $rootScope.loading = true;
 
       var language = data.language;
 
