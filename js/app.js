@@ -40,10 +40,7 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
 
     $rootScope.$on('$translateChangeSuccess', function(event, data) {
 
-      $rootScope.loading = true;
-
       var language = data.language;
-
       $rootScope.lang = language;
 
       $rootScope.default_direction = language === 'ar' ? 'rtl' : 'ltr';
@@ -52,6 +49,7 @@ app.controller('LanguageSwitchController', ['$scope', '$rootScope', '$translate'
       $rootScope.default_float = language === 'ar' ? 'right' : 'left';
       $rootScope.opposite_float = language === 'ar' ? 'left' : 'right';
 
+      $rootScope.loading = true;
     });
   }
 
